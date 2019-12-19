@@ -76,6 +76,34 @@
       <p>Open VKL provides a C API, and also supports applications written with the Intel® SPMD Program Compiler (ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-0.8.0-alpha">Open VKL 0.8.0 (alpha)</h3>
+      <ul>
+      <li>Added support for structured volumes on spherical grids (<code>"structured_spherical"</code> volume type)</li>
+      <li>Structured regular volumes:
+      <ul>
+      <li>Up to 8x performance improvement for scalar (single-wide) sampling</li>
+      <li>Fixed hit iterator bug which could lead to isosurfacing artifacts</li>
+      <li>Renamed <code>voxelData</code> parameter to <code>data</code></li>
+      </ul></li>
+      <li>Unstructured volumes:
+      <ul>
+      <li>Up to 4x performance improvement for scalar (single-wide) sampling</li>
+      <li>Improved interval iterator implementation for more efficient space skipping and tighter value bounds on returned intervals</li>
+      <li>Now using Embree for BVH builds for faster build times / volume commits</li>
+      <li>Renamed <code>vertex.value</code> and <code>cell.value</code> parameters to <code>vertex.data</code> and <code>cell.data</code>, respectively</li>
+      </ul></li>
+      <li>AMR volumes:
+      <ul>
+      <li>renamed <code>block.cellWidth</code> parameter to <code>cellWidth</code>, and clarified API documentation</li>
+      </ul></li>
+      <li>Added <code>vklGetValueRange()</code> API for querying volume value ranges</li>
+      <li>Added new driver parameters, APIs, and environment variables allowing user control of log levels, log / error output redirection, number of threads, and other options</li>
+      <li><code>vklIterateHit[4,8,16]()</code> and <code>vklIterateInterval[4,8,16]()</code> calls now only populate hit / interval data for active lanes</li>
+      <li>Changed <code>VKLDataType</code> enum values for better forward compatibility</li>
+      <li>ISPC-side hit and interval iterator objects must now be declared <code>varying</code></li>
+      <li>More flexible ISA build configuration through <code>OPENVKL_MAX_ISA</code> and <code>OPENVKL_ISA_*</code> CMake build options</li>
+      <li>Minimum ospcommon version is now 1.1.0</li>
+      </ul>
       <h3 id="open-vkl-0.7.0-alpha">Open VKL 0.7.0 (alpha)</h3>
       <ul>
       <li>Initial public alpha release, with support for structured, unstructured, and AMR volumes.</li>
