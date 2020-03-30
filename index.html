@@ -9,6 +9,25 @@
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/popper.min.js"></script>
     <script src="scripts/bootstrap.min.js"></script>
+
+    <script>
+      /*
+       * Whenever we detect a slide change event, stop playing videos,
+       * and reset them, and play the active video.
+       */
+      jQuery(document).ready(function () {
+
+        jQuery('#demo').on('slid.bs.carousel', function () {
+          jQuery(this).find("video").each(function (i, video) {
+            video.pause();
+            video.currentTime = 0;
+          });
+          jQuery(this).find(".active video").each(function (i, video) {
+            video.play();
+          })
+        });
+      });
+    </script>
   </head>
 
 <body>
@@ -37,21 +56,58 @@
     <div id="content">
 
       <div id="demo" class="carousel slide" data-ride="carousel">
+      
       <!-- Indicators -->
-      <ul class="carousel-indicators">
+      <ol class="carousel-indicators">
       <li data-target="#demo" data-slide-to="0" class="active">
       </li>
       <li data-target="#demo" data-slide-to="1">
       </li>
-      </ul>
+      <li data-target="#demo" data-slide-to="2">
+      </li>
+      <li data-target="#demo" data-slide-to="3">
+      </li>
+      <li data-target="#demo" data-slide-to="4">
+      </li>
+      <li data-target="#demo" data-slide-to="5">
+      </li>
+      </ol>
       <div class="carousel-inner">
+      
       <div class="carousel-item active">
+      <img src="images/fire_extinguisher.jpg">
+      <div class="carousel-caption">
+      <h3>
+      VDB Support
+      </h3>
+      <p>
+      Created in SideFX Houdini, rendered in OSPRay 2.0 with Open VKL and Open Image Denoise.
+      </p>
+      </div>
+      </div>
+      <div class="carousel-item">
       <img src="images/cloud_standalone.jpg">
       <div class="carousel-caption">
       <h3>
       Open VKL based volumetric path tracing of the Disney cloud
       </h3>
       <p>
+      </p>
+      </div>
+      </div>
+      <div class="carousel-item" data-interval="20000">
+      <video muted loop poster="images/deferred_loading_0001.jpg" width="1024" height="576">
+      <!-- Fall back to mp4 for browser compatibility, or a preview
+      frame if video is not supported. -->
+      <source src="images/deferred_loading.webm" type="video/webm">
+      <source src="images/deferred_loading.mp4" type="video/mp4">
+      <img src="images/deferred_loading_0423.jpg"> </video>
+      <div class="carousel-caption">
+      <h3>
+      Interactive Data Exploration
+      </h3>
+      <p>
+      Loading leaf data from the Disney Moana cloud dataset while the user manipulates the viewport.
       </p>
       </div>
       </div>
@@ -62,13 +118,37 @@
       OSPRay 2.0 + Open VKL
       </h3>
       <p>
-      The Disney Moana island and cloud rendered with OSPRay 2.0 using the new Open VKL integration
+      The Disney Moana island and cloud rendered with OSPRay 2.0 using the new Open VKL integration.
+      </p>
+      </div>
+      </div>
+      <div class="carousel-item">
+      <img src="images/coffee.jpg">
+      <div class="carousel-caption">
+      <h3>
+      VDB Support
+      </h3>
+      <p>
+      Created in SideFX Houdini, rendered in OSPRay 2.0 with Open VKL and Open Image Denoise.
+      </p>
+      </div>
+      </div>
+      <div class="carousel-item">
+      <img src="images/jf_smoke.jpg">
+      <div class="carousel-caption">
+      <h3>
+      VDB Support
+      </h3>
+      <p>
+      Created in SideFX Houdini, rendered using Open VKL.
       </p>
       </div>
       </div>
       </div>
       <!-- Left and right controls -->
-      <p><a class="carousel-control-prev" href="#demo" data-slide="prev"> <span class="carousel-control-prev-icon"></span> </a> <a class="carousel-control-next" href="#demo" data-slide="next"> <span class="carousel-control-next-icon"></span> </a></p>
+      <p>
+      <a class="carousel-control-prev" href="#demo" role="button" data-slide="prev"> <span class="carousel-control-prev-icon"></span> </a> <a class="carousel-control-next" href="#demo" role="button" data-slide="next"> <span class="carousel-control-next-icon"></span> </a>
+      </p>
       </div>
       <hr>
       <h1 id="overview">Overview</h1>
@@ -76,6 +156,29 @@
       <p>Open VKL provides a C API, and also supports applications written with the Intel® SPMD Program Compiler (ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-0.9.0-alpha">Open VKL 0.9.0 (alpha)</h3>
+      <ul>
+      <li>Added support for VDB sparse structured volumes (<code>"vdb"</code> volume type)</li>
+      <li>Added <code>vdb_util</code> library to simplify instantiation of VDB volumes, and support loading of .vdb files using OpenVDB</li>
+      <li>Added <code>VKLObserver</code> and associated APIs, which may used by volume types to pass information back to the application
+      <ul>
+      <li>A <code>LeafNodeAccess</code> observer is provided for VDB volumes to support on-demand loading of leaf nodes</li>
+      </ul></li>
+      <li>Structured regular volumes:
+      <ul>
+      <li>Up to 6x performance improvement for scalar iterator initialization</li>
+      <li>Up to 2x performance improvement for scalar iterator iteration</li>
+      </ul></li>
+      <li>General improvements to the CMake Superbuild for building Open VKL and all associated dependencies</li>
+      <li>Allowing instantiation of ISPC driver for any supported SIMD width (in addition to the default automatically selected width)</li>
+      <li>Volume type names are now camelCase (legacy snake_case type names are deprecated), impacting <code>structuredRegular</code> and <code>structuredSpherical</code> volumes</li>
+      <li>Enabling <code>flushDenormals</code> driver mode by default</li>
+      <li>Aligning public <code>vkl_vvec3f[4,8,16]</code> and <code>vkl_vrange1f[4,8,16]</code> types</li>
+      <li>Added <code>VKL_LOG_NONE</code> log level</li>
+      <li>Fixed bug in <code>vklExamples</code> which could lead to improper rendering on macOS Catalina</li>
+      <li>Fixed bug in unstructured volume interval iterator which could lead to errors with some combinations of lane masks</li>
+      <li>Now providing binary releases for Linux, macOS, and Windows</li>
+      </ul>
       <h3 id="open-vkl-0.8.0-alpha">Open VKL 0.8.0 (alpha)</h3>
       <ul>
       <li>Added support for structured volumes on spherical grids (<code>"structured_spherical"</code> volume type)</li>
@@ -116,7 +219,7 @@
   </div>
 
     <div id="footer">
-    © 2019 Intel Corporation <a href="legal.html">Disclaimer and Legal Information</a>
+    © 2019-2020 Intel Corporation <a href="legal.html">Disclaimer and Legal Information</a>
     <a href="https://www.intel.com/privacy">Privacy</a>
   </div>
   </body>

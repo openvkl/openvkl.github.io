@@ -237,7 +237,7 @@
       <span id="cb1-127"><a href="#cb1-127"></a></span>
       <span id="cb1-128"><a href="#cb1-128"></a>  <span class="at">const</span> <span class="dt">int</span> numVoxels = dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] * dimensions[<span class="dv">2</span>];</span>
       <span id="cb1-129"><a href="#cb1-129"></a></span>
-      <span id="cb1-130"><a href="#cb1-130"></a>  VKLVolume volume = vklNewVolume(<span class="st">&quot;structured_regular&quot;</span>);</span>
+      <span id="cb1-130"><a href="#cb1-130"></a>  VKLVolume volume = vklNewVolume(<span class="st">&quot;structuredRegular&quot;</span>);</span>
       <span id="cb1-131"><a href="#cb1-131"></a>  vklSetVec3i(volume, <span class="st">&quot;dimensions&quot;</span>, dimensions[<span class="dv">0</span>], dimensions[<span class="dv">1</span>], dimensions[<span class="dv">2</span>]);</span>
       <span id="cb1-132"><a href="#cb1-132"></a>  vklSetVec3f(volume, <span class="st">&quot;gridOrigin&quot;</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
       <span id="cb1-133"><a href="#cb1-133"></a>  vklSetVec3f(volume, <span class="st">&quot;gridSpacing&quot;</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>);</span>
@@ -281,7 +281,7 @@
   </div>
 
     <div id="footer">
-    © 2019 Intel Corporation <a href="legal.html">Disclaimer and Legal Information</a>
+    © 2019-2020 Intel Corporation <a href="legal.html">Disclaimer and Legal Information</a>
     <a href="https://www.intel.com/privacy">Privacy</a>
   </div>
   </body>
