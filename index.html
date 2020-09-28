@@ -79,13 +79,13 @@
       <div class="carousel-inner">
       
       <div class="carousel-item active">
-      <img src="images/hacc.jpg">
+      <img src="images/siggraph20_cloudscape.jpg">
       <div class="carousel-caption">
       <h3>
-      Particle Volume Support
+      SIGGRAPH 2020 demo: Interactive Volumetric Path Traced Cloudscape
       </h3>
       <p>
-      Open VKL based volumetric path tracing of a 5.9 million particle subset of the HACC DarkSky simulation. Data courtesy of Salman Habib and Katrin Heitmann at Argonne National Laboratory.
+      Interactive rendering of a large-scale volumetric cloudscape of VDB volumes, using Intel® Open Volume Kernel Library, Intel® OSPRay, and Intel® OSPRay Studio. <a href="https://www.youtube.com/watch?v=cpRMNuyiTig">Video</a>
       </p>
       </div>
       </div>
@@ -133,7 +133,7 @@
       Interactive Data Exploration
       </h3>
       <p>
-      Loading leaf data from the Disney Moana cloud dataset while the user manipulates the viewport.
+      Loading leaf data from the Disney Moana cloud dataset while the user manipulates the viewport. White regions indicate inner nodes, while blue regions indicate fully-loaded leaf data.
       </p>
       </div>
       </div>
@@ -182,6 +182,36 @@
       <p>Open VKL provides a C API, and also supports applications written with the Intel® SPMD Program Compiler (ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-0.11.0">Open VKL 0.11.0</h3>
+      <ul>
+      <li>Introduced API support for multi-attribute volumes, including APIs for sampling multiple attributes simultaneously
+      <ul>
+      <li>Initially only <code>structuredRegular</code> and <code>structuredSpherical</code> volume types support multi-attribute data</li>
+      </ul></li>
+      <li>Iterator APIs now work on sampler objects rather than volumes, supporting finer-grained configurability</li>
+      <li>Observers can now be created for both volume and sampler objects
+      <ul>
+      <li><code>LeafNodeAccess</code> observers must now be created on sampler objects</li>
+      </ul></li>
+      <li>Log and error callbacks now support a user pointer</li>
+      <li><code>vdb</code> volume interval iterators:
+      <ul>
+      <li>Added support for elementary cell iteration when <code>maxIteratorDepth</code> is set to <code>VKL_VDB_NUM_LEVELS</code>-1</li>
+      <li>Up to 2x faster iteration</li>
+      </ul></li>
+      <li><code>unstructured</code> and <code>particle</code> volume interval iterators:
+      <ul>
+      <li>Improved interior empty space skipping behavior</li>
+      <li>Added support for configurable iterator depth via the <code>maxIteratorDepth</code> parameter</li>
+      </ul></li>
+      <li>Added support for filter modes in <code>structuredRegular</code> and <code>structuredSpherical</code> volumes</li>
+      <li><code>amr</code> volumes now support <code>method</code> parameter on sampler objects</li>
+      <li>Added new <code>interval_iterator_debug</code> renderer in <code>vklExamples</code> to visualize interval iteration behavior</li>
+      <li>Hit iterator accuracy improvements for <code>unstructured</code> volumes</li>
+      <li>Fixed bugs in <code>amr</code> and <code>vdb</code> volume bounding box computations</li>
+      <li>Fixed bug in <code>unstructured</code> volume gradient computations near empty regions</li>
+      <li>Minimum ISPC version is now v1.14.1</li>
+      </ul>
       <h3 id="open-vkl-0.10.0-alpha">Open VKL 0.10.0 (alpha)</h3>
       <ul>
       <li>Added new <code>particle</code> volume type supporting Gaussian radial basis functions</li>

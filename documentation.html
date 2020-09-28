@@ -247,14 +247,14 @@
       <p>A more descriptive error message can be queried by calling</p>
       <div class="sourceCode" id="cb12"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1"></a><span class="at">const</span> <span class="dt">char</span>* vklDriverGetLastErrorMsg(VKLDriver);</span></code></pre></div>
       <p>Alternatively, the application can also register a callback function of type</p>
-      <div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">typedef</span> <span class="dt">void</span> (*VKLErrorFunc)(VKLError, <span class="at">const</span> <span class="dt">char</span>* message);</span></code></pre></div>
+      <div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">typedef</span> <span class="dt">void</span> (*VKLErrorCallback)(<span class="dt">void</span> *, VKLError, <span class="at">const</span> <span class="dt">char</span>* message);</span></code></pre></div>
       <p>via</p>
-      <div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a><span class="dt">void</span> vklDriverSetErrorFunc(VKLDriver, VKLErrorFunc);</span></code></pre></div>
+      <div class="sourceCode" id="cb14"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1"></a><span class="dt">void</span> vklDriverSetErrorCallback(VKLDriver, VKLErrorFunc, <span class="dt">void</span> *);</span></code></pre></div>
       <p>to get notified when errors occur. Applications may be interested in messages which Open VKL emits, whether for debugging or logging events. Applications can register a callback function of type</p>
-      <div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">typedef</span> <span class="dt">void</span> (*VKLLogFunc)(<span class="at">const</span> <span class="dt">char</span>* message);</span></code></pre></div>
+      <div class="sourceCode" id="cb15"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">typedef</span> <span class="dt">void</span> (*VKLLogCallback)(<span class="dt">void</span> *, <span class="at">const</span> <span class="dt">char</span>* message);</span></code></pre></div>
       <p>via</p>
-      <div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="dt">void</span> vklDriverSetLogFunc(VKLDriver, VKLLogFunc);</span></code></pre></div>
-      <p>which Open VKL will use to emit log messages. Applications can clear either callback by passing <code>nullptr</code> instead of an actual function pointer. By default, Open VKL uses <code>cout</code> and <code>cerr</code> to emit log and error messages, respectively. Note that in addition to setting the above callbacks, this behavior can be changed via the driver parameters and environment variables described previously.</p>
+      <div class="sourceCode" id="cb16"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1"></a><span class="dt">void</span> vklDriverSetLogCallback(VKLDriver, VKLLogCallback, <span class="dt">void</span> *);</span></code></pre></div>
+      <p>which Open VKL will use to emit log messages. Applications can clear either callback by passing <code>nullptr</code> instead of an actual function pointer. By default, Open VKL uses <code>cout</code> and <code>cerr</code> to emit log and error messages, respectively. The last parameter to <code>vklDriverSetErrorCallback</code> and <code>vklDriverSetLogCallback</code> is a user data pointer. Open VKL passes this pointer to the callback functions as the first parameter. Note that in addition to setting the above callbacks, this behavior can be changed via the driver parameters and environment variables described previously.</p>
       <h2 id="basic-data-types">Basic data types</h2>
       <p>Open VKL defines 3-component vectors of integer and vector types:</p>
       <div class="sourceCode" id="cb17"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
@@ -313,14 +313,17 @@
       <span id="cb22-5"><a href="#cb22-5"></a>                   <span class="dt">size_t</span> byteStride);</span></code></pre></div>
       <p>Types accepted are listed in <code>VKLDataType.h</code>; basic types (<code>UCHAR</code>, <code>INT</code>, <code>UINT</code>, <code>LONG</code>, <code>ULONG</code>, <code>FLOAT</code>) exist as both scalar and chunked formats. The types accepted vary per volume at the moment; read the volume section below for specifics.</p>
       <p>Data objects can be created as Open VKL owned (<code>dataCreationFlags = VKL_DATA_DEFAULT</code>), in which the library will make a copy of the data for its use, or shared (<code>dataCreationFlags = VKL_DATA_SHARED_BUFFER</code>), which will try to use the passed pointer for usage. The library is allowed to copy data when a volume is committed.</p>
-      <p>The distance between consecutive elements in <code>source</code> is given in bytes with <code>byteStride</code>. If the provided <code>byteStride</code> is zero, then it will be determined automatically as <code>sizeof(type)</code>.</p>
+      <p>The distance between consecutive elements in <code>source</code> is given in bytes with <code>byteStride</code>. If the provided <code>byteStride</code> is zero, then it will be determined automatically as <code>sizeof(type)</code>. Open VKL owned data will be compacted into a naturally-strided array on copy, regardless of the original <code>byteStride</code>.</p>
       <p>As with other object types, when data objects are no longer needed they should be released via <code>vklRelease</code>.</p>
       <h2 id="observers">Observers</h2>
-      <p>Volumes in Open VKL may provide observers to communicate data back to the application. Observers may be created with</p>
-      <div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1"></a>VKLObserver vklNewObserver(VKLVolume volume,</span>
-      <span id="cb23-2"><a href="#cb23-2"></a>                           <span class="at">const</span> <span class="dt">char</span> *type);</span></code></pre></div>
-      <p>The volume passed to <code>vklNewObserver</code> must already be committed. Valid observer type strings are defined by volume implementations (see section ‘Volume types’ below).</p>
-      <p><code>vklNewObserver</code> returns <code>NULL</code> on failure.</p>
+      <p>Volumes and samplers in Open VKL may provide observers to communicate data back to the application. Observers may be created with</p>
+      <div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1"></a>VKLObserver vklNewSamplerObserver(VKLSampler sampler,</span>
+      <span id="cb23-2"><a href="#cb23-2"></a>                                  <span class="at">const</span> <span class="dt">char</span> *type);</span>
+      <span id="cb23-3"><a href="#cb23-3"></a></span>
+      <span id="cb23-4"><a href="#cb23-4"></a>VKLObserver vklNewVolumeObserver(VKLVolume volume,</span>
+      <span id="cb23-5"><a href="#cb23-5"></a>                                 <span class="at">const</span> <span class="dt">char</span> *type);</span></code></pre></div>
+      <p>The object passed to <code>vklNew*Observer</code> must already be committed. Valid observer type strings are defined by volume implementations (see section ‘Volume types’ below).</p>
+      <p><code>vklNew*Observer</code> returns <code>NULL</code> on failure.</p>
       <p>To access the underlying data, an observer must first be mapped using</p>
       <div class="sourceCode" id="cb24"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1"></a><span class="at">const</span> <span class="dt">void</span> * vklMapObserver(VKLObserver observer);</span></code></pre></div>
       <p>If this fails, the function returns <code>NULL</code>. <code>vklMapObserver</code> may fail on observers that are already mapped. On success, the application may query the underlying type and the number of elements in the buffer using</p>
@@ -337,19 +340,21 @@
       <p>Open VKL currently supports structured volumes on regular and spherical grids; unstructured volumes with tetrahedral, wedge, pyramid, and hexaderal primitive types; adaptive mesh refinement (AMR) volumes; sparse VDB volumes; and particle volumes. These volumes are created with <code>vklNewVolume</code> with the appropriate type string.</p>
       <p>In addition to the usual <code>vklSet...()</code> and <code>vklCommit()</code> APIs, the volume bounding box can be queried:</p>
       <div class="sourceCode" id="cb27"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb27-1"><a href="#cb27-1"></a>vkl_box3f vklGetBoundingBox(VKLVolume volume);</span></code></pre></div>
-      <p>The value range of the volume can also be queried:</p>
-      <div class="sourceCode" id="cb28"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb28-1"><a href="#cb28-1"></a>vkl_range1f vklGetValueRange(VKLVolume volume);</span></code></pre></div>
+      <p>The number of attributes in a volume can also be queried:</p>
+      <div class="sourceCode" id="cb28"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb28-1"><a href="#cb28-1"></a><span class="dt">unsigned</span> <span class="dt">int</span> vklGetNumAttributes(VKLVolume volume);</span></code></pre></div>
+      <p>Finally, the value range of the volume (first attribute only) can be queried:</p>
+      <div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="#cb29-1"></a>vkl_range1f vklGetValueRange(VKLVolume volume);</span></code></pre></div>
       <h3 id="structured-volumes">Structured Volumes</h3>
       <p>Structured volumes only need to store the values of the samples, because their addresses in memory can be easily computed from a 3D position. The dimensions for all structured volume types are in units of vertices, not cells. For example, a volume with dimensions <span class="math inline">(<em>x</em>, <em>y</em>, <em>z</em>)</span> will have <span class="math inline">(<em>x</em> − 1, <em>y</em> − 1, <em>z</em> − 1)</span> cells in each dimension. Voxel data provided is assumed vertex-centered, so <span class="math inline"><em>x</em> * <em>y</em> * <em>z</em></span> values must be provided.</p>
       <h4 id="structured-regular-volumes">Structured Regular Volumes</h4>
       <p>A common type of structured volumes are regular grids, which are created by passing a type string of <code>"structuredRegular"</code> to <code>vklNewVolume</code>. The parameters understood by structured regular volumes are summarized in the table below.</p>
-      <table style="width:97%;">
+      <table style="width:98%;">
       <caption>Configuration parameters for structured regular (<code>"structuredRegular"</code>) volumes.</caption>
       <colgroup>
-      <col style="width: 10%" />
+      <col style="width: 17%" />
+      <col style="width: 17%" />
       <col style="width: 18%" />
-      <col style="width: 20%" />
-      <col style="width: 48%" />
+      <col style="width: 43%" />
       </colgroup>
       <thead>
       <tr class="header">
@@ -367,10 +372,10 @@
       <td style="text-align: left;">number of voxels in each dimension <span class="math inline">(<em>x</em>, <em>y</em>, <em>z</em>)</span></td>
       </tr>
       <tr class="even">
-      <td style="text-align: left;">data</td>
+      <td style="text-align: left;">VKLData VKLData[]</td>
       <td style="text-align: left;">data</td>
       <td style="text-align: center;"></td>
-      <td style="text-align: left;">VKLData object of voxel data, supported types are:</td>
+      <td style="text-align: left;">VKLData object(s) of voxel data, supported types are:</td>
       </tr>
       <tr class="odd">
       <td style="text-align: left;"></td>
@@ -403,16 +408,54 @@
       <td style="text-align: left;"><code>VKL_DOUBLE</code></td>
       </tr>
       <tr class="even">
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: center;"></td>
+      <td style="text-align: left;">Multiple attributes are supported through passing an array of VKLData objects.</td>
+      </tr>
+      <tr class="odd">
       <td style="text-align: left;">vec3f</td>
       <td style="text-align: left;">gridOrigin</td>
       <td style="text-align: center;"><span class="math inline">(0, 0, 0)</span></td>
       <td style="text-align: left;">origin of the grid in world-space</td>
       </tr>
-      <tr class="odd">
+      <tr class="even">
       <td style="text-align: left;">vec3f</td>
       <td style="text-align: left;">gridSpacing</td>
       <td style="text-align: center;"><span class="math inline">(1, 1, 1)</span></td>
       <td style="text-align: left;">size of the grid cells in world-space</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>The following additional parameters can be set both on <code>"structuredRegular"</code> volumes and their sampler objects. Sampler object parameters default to volume parameters.</p>
+      <table style="width:98%;">
+      <caption>Configuration parameters for structured regular (<code>"structuredRegular"</code>) volumes and their sampler objects.</caption>
+      <colgroup>
+      <col style="width: 12%" />
+      <col style="width: 20%" />
+      <col style="width: 29%" />
+      <col style="width: 35%" />
+      </colgroup>
+      <thead>
+      <tr class="header">
+      <th style="text-align: left;">Type</th>
+      <th style="text-align: left;">Name</th>
+      <th style="text-align: left;">Default</th>
+      <th style="text-align: left;">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">filter</td>
+      <td style="text-align: left;"><code>VKL_FILTER_TRILINEAR</code></td>
+      <td style="text-align: left;">The filter used for reconstructing the field. Use <code>VKLFilter</code> for named constants.</td>
+      </tr>
+      <tr class="even">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">gradientFilter</td>
+      <td style="text-align: left;"><code>filter</code></td>
+      <td style="text-align: left;">The filter used for reconstructing the field during gradient computations. Use <code>VKLFilter</code> for named constants.</td>
       </tr>
       </tbody>
       </table>
@@ -421,13 +464,13 @@
       <figure>
       <img src="images/structured_spherical_coords.png" alt="" /><figcaption>Structured spherical volume coordinate system: radial distance (<span class="math inline"><em>r</em></span>), inclination angle (<span class="math inline"><em>θ</em></span>), and azimuthal angle (<span class="math inline"><em>ϕ</em></span>).</figcaption>
       </figure>
-      <table style="width:97%;">
+      <table style="width:98%;">
       <caption>Configuration parameters for structured spherical (<code>"structuredSpherical"</code>) volumes.</caption>
       <colgroup>
-      <col style="width: 10%" />
+      <col style="width: 17%" />
+      <col style="width: 17%" />
       <col style="width: 18%" />
-      <col style="width: 20%" />
-      <col style="width: 48%" />
+      <col style="width: 43%" />
       </colgroup>
       <thead>
       <tr class="header">
@@ -445,10 +488,10 @@
       <td style="text-align: left;">number of voxels in each dimension <span class="math inline">(<em>r</em>, <em>θ</em>, <em>ϕ</em>)</span></td>
       </tr>
       <tr class="even">
-      <td style="text-align: left;">data</td>
+      <td style="text-align: left;">VKLData VKLData[]</td>
       <td style="text-align: left;">data</td>
       <td style="text-align: center;"></td>
-      <td style="text-align: left;">VKLData object of voxel data, supported types are:</td>
+      <td style="text-align: left;">VKLData object(s) of voxel data, supported types are:</td>
       </tr>
       <tr class="odd">
       <td style="text-align: left;"></td>
@@ -481,12 +524,18 @@
       <td style="text-align: left;"><code>VKL_DOUBLE</code></td>
       </tr>
       <tr class="even">
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: center;"></td>
+      <td style="text-align: left;">Multiple attributes are supported through passing an array of VKLData objects.</td>
+      </tr>
+      <tr class="odd">
       <td style="text-align: left;">vec3f</td>
       <td style="text-align: left;">gridOrigin</td>
       <td style="text-align: center;"><span class="math inline">(0, 0, 0)</span></td>
       <td style="text-align: left;">origin of the grid in units of <span class="math inline">(<em>r</em>, <em>θ</em>, <em>ϕ</em>)</span>; angles in degrees</td>
       </tr>
-      <tr class="odd">
+      <tr class="even">
       <td style="text-align: left;">vec3f</td>
       <td style="text-align: left;">gridSpacing</td>
       <td style="text-align: center;"><span class="math inline">(1, 1, 1)</span></td>
@@ -500,18 +549,51 @@
       <li><span class="math inline">0 ≤ <em>θ</em> ≤ 180</span></li>
       <li><span class="math inline">0 ≤ <em>ϕ</em> ≤ 360</span></li>
       </ul>
+      <p>The following additional parameters can be set both on <code>"structuredSpherical"</code> volumes and their sampler objects. Sampler object parameters default to volume parameters.</p>
+      <table style="width:98%;">
+      <caption>Configuration parameters for structured spherical (<code>"structuredSpherical"</code>) volumes and their sampler objects.</caption>
+      <colgroup>
+      <col style="width: 12%" />
+      <col style="width: 20%" />
+      <col style="width: 29%" />
+      <col style="width: 35%" />
+      </colgroup>
+      <thead>
+      <tr class="header">
+      <th style="text-align: left;">Type</th>
+      <th style="text-align: left;">Name</th>
+      <th style="text-align: left;">Default</th>
+      <th style="text-align: left;">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">filter</td>
+      <td style="text-align: left;"><code>VKL_FILTER_TRILINEAR</code></td>
+      <td style="text-align: left;">The filter used for reconstructing the field. Use <code>VKLFilter</code> for named constants.</td>
+      </tr>
+      <tr class="even">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">gradientFilter</td>
+      <td style="text-align: left;"><code>filter</code></td>
+      <td style="text-align: left;">The filter used for reconstructing the field during gradient computations. Use <code>VKLFilter</code> for named constants.</td>
+      </tr>
+      </tbody>
+      </table>
       <h3 id="adaptive-mesh-refinement-amr-volumes">Adaptive Mesh Refinement (AMR) Volumes</h3>
       <p>Open VKL currently supports block-structured (Berger-Colella) AMR volumes. Volumes are specified as a list of blocks, which exist at levels of refinement in potentially overlapping regions. Blocks exist in a tree structure, with coarser refinement level blocks containing finer blocks. The cell width is equal for all blocks at the same refinement level, though blocks at a coarser level have a larger cell width than finer levels.</p>
-      <p>There can be any number of refinement levels and any number of blocks at any level of refinement. An AMR volume type is created by passing the type string <code>"amr"</code> to <code>vklNewVolume</code>.</p>
+      <p>There can be any number of refinement levels and any number of blocks at any level of refinement.</p>
       <p>Blocks are defined by three parameters: their bounds, the refinement level in which they reside, and the scalar data contained within each block.</p>
       <p>Note that cell widths are defined <em>per refinement level</em>, not per block.</p>
-      <table style="width:98%;">
+      <p>AMR volumes are created by passing the type string <code>"amr"</code> to <code>vklNewVolume</code>, and have the following parameters:</p>
+      <table style="width:97%;">
       <caption>Configuration parameters for AMR (<code>"amr"</code>) volumes.</caption>
       <colgroup>
+      <col style="width: 18%" />
+      <col style="width: 19%" />
       <col style="width: 20%" />
-      <col style="width: 17%" />
-      <col style="width: 23%" />
-      <col style="width: 35%" />
+      <col style="width: 38%" />
       </colgroup>
       <thead>
       <tr class="header">
@@ -522,30 +604,6 @@
       </tr>
       </thead>
       <tbody>
-      <tr class="odd">
-      <td style="text-align: left;"><code>VKLAMRMethod</code></td>
-      <td style="text-align: left;">method</td>
-      <td style="text-align: right;"><code>VKL_AMR_CURRENT</code></td>
-      <td style="text-align: left;"><code>VKLAMRMethod</code> sampling method. Supported methods are:</td>
-      </tr>
-      <tr class="even">
-      <td style="text-align: left;"></td>
-      <td style="text-align: left;"></td>
-      <td style="text-align: right;"></td>
-      <td style="text-align: left;"><code>VKL_AMR_CURRENT</code></td>
-      </tr>
-      <tr class="odd">
-      <td style="text-align: left;"></td>
-      <td style="text-align: left;"></td>
-      <td style="text-align: right;"></td>
-      <td style="text-align: left;"><code>VKL_AMR_FINEST</code></td>
-      </tr>
-      <tr class="even">
-      <td style="text-align: left;"></td>
-      <td style="text-align: left;"></td>
-      <td style="text-align: right;"></td>
-      <td style="text-align: left;"><code>VKL_AMR_OCTANT</code></td>
-      </tr>
       <tr class="odd">
       <td style="text-align: left;">float[]</td>
       <td style="text-align: left;">cellWidth</td>
@@ -585,6 +643,50 @@
       </tbody>
       </table>
       <p>Note that the <code>gridOrigin</code> and <code>gridSpacing</code> parameters act just like the structured volume equivalent, but they only modify the root (coarsest level) of refinement.</p>
+      <p>The following additional parameters can be set both on <code>"amr"</code> volumes and their sampler objects. Sampler object parameters default to volume parameters.</p>
+      <table style="width:98%;">
+      <caption>Configuration parameters for AMR (<code>"AMR"</code>) volumes and their sampler objects.</caption>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 15%" />
+      <col style="width: 24%" />
+      <col style="width: 36%" />
+      </colgroup>
+      <thead>
+      <tr class="header">
+      <th style="text-align: left;">Type</th>
+      <th style="text-align: left;">Name</th>
+      <th style="text-align: right;">Default</th>
+      <th style="text-align: left;">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td style="text-align: left;"><code>VKLAMRMethod</code></td>
+      <td style="text-align: left;">method</td>
+      <td style="text-align: right;"><code>VKL_AMR_CURRENT</code></td>
+      <td style="text-align: left;"><code>VKLAMRMethod</code> sampling method. Supported methods are:</td>
+      </tr>
+      <tr class="even">
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: right;"></td>
+      <td style="text-align: left;"><code>VKL_AMR_CURRENT</code></td>
+      </tr>
+      <tr class="odd">
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: right;"></td>
+      <td style="text-align: left;"><code>VKL_AMR_FINEST</code></td>
+      </tr>
+      <tr class="even">
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: right;"></td>
+      <td style="text-align: left;"><code>VKL_AMR_OCTANT</code></td>
+      </tr>
+      </tbody>
+      </table>
       <p>Open VKL’s AMR implementation was designed to cover Berger-Colella [1] and Chombo [2] AMR data. The <code>method</code> parameter above determines the interpolation method used when sampling the volume.</p>
       <ul>
       <li><code>VKL_AMR_CURRENT</code> finds the finest refinement level at that cell and interpolates through this “current” level</li>
@@ -598,13 +700,15 @@
       <li>I. Wald, C. Brownlee, W. Usher, and A. Knoll. CPU volume rendering of adaptive mesh refinement data. SIGGRAPH Asia 2017 Symposium on Visualization on - SA ’17, 18(8), 1–8. DOI: 10.1145/3139295.3139305</li>
       </ol>
       <h3 id="unstructured-volumes">Unstructured Volumes</h3>
-      <p>Unstructured volumes can have their topology and geometry freely defined. Geometry can be composed of tetrahedral, hexahedral, wedge or pyramid cell types. The data format used is compatible with VTK and consists of multiple arrays: vertex positions and values, vertex indices, cell start indices, cell types, and cell values. An unstructured volume type is created by passing the type string <code>"unstructured"</code> to <code>vklNewVolume</code>.</p>
+      <p>Unstructured volumes can have their topology and geometry freely defined. Geometry can be composed of tetrahedral, hexahedral, wedge or pyramid cell types. The data format used is compatible with VTK and consists of multiple arrays: vertex positions and values, vertex indices, cell start indices, cell types, and cell values.</p>
       <p>Sampled cell values can be specified either per-vertex (<code>vertex.data</code>) or per-cell (<code>cell.data</code>). If both arrays are set, <code>cell.data</code> takes precedence.</p>
       <p>Similar to a mesh, each cell is formed by a group of indices into the vertices. For each vertex, the corresponding (by array index) data value will be used for sampling when rendering, if specified. The index order for a tetrahedron is the same as <code>VTK_TETRA</code>: bottom triangle counterclockwise, then the top vertex.</p>
       <p>For hexahedral cells, each hexahedron is formed by a group of eight indices into the vertices and data values. Vertex ordering is the same as <code>VTK_HEXAHEDRON</code>: four bottom vertices counterclockwise, then top four counterclockwise.</p>
       <p>For wedge cells, each wedge is formed by a group of six indices into the vertices and data values. Vertex ordering is the same as <code>VTK_WEDGE</code>: three bottom vertices counterclockwise, then top three counterclockwise.</p>
       <p>For pyramid cells, each cell is formed by a group of five indices into the vertices and data values. Vertex ordering is the same as <code>VTK_PYRAMID</code>: four bottom vertices counterclockwise, then the top vertex.</p>
       <p>To maintain VTK data compatibility, the <code>index</code> array may be specified with cell sizes interleaved with vertex indices in the following format: <span class="math inline"><em>n</em>, <em>i</em><em>d</em><sub>1</sub>, ..., <em>i</em><em>d</em><sub><em>n</em></sub>, <em>m</em>, <em>i</em><em>d</em><sub>1</sub>, ..., <em>i</em><em>d</em><sub><em>m</em></sub></span>. This alternative <code>index</code> array layout can be enabled through the <code>indexPrefixed</code> flag (in which case, the <code>cell.type</code> parameter should be omitted).</p>
+      <p>A binary bounding volume hierarchy (BVH) is used internally to accelerate interval iteration. Intervals are found by intersecting BVH nodes up to a maximum level of the tree, configurable by the <code>maxIteratorDepth</code> parameter. Larger values of <code>maxIteratorDepth</code> lead to smaller individual intervals (up to leaf node intersections), yielding potentially more efficient space-skipping behavior and tighter bounds on returned interval metadata.</p>
+      <p>Unstructured volumes are created by passing the type string <code>"unstructured"</code> to <code>vklNewVolume</code>, and have the following parameters:</p>
       <table style="width:98%;">
       <caption>Configuration parameters for unstructured (<code>"unstructured"</code>) volumes.</caption>
       <colgroup>
@@ -702,6 +806,32 @@
       </tr>
       </tbody>
       </table>
+      <p>The following additional parameters can be set both on <code>unstructured</code> volumes and their sampler objects (sampler object parameters default to volume parameters).</p>
+      <table style="width:97%;">
+      <caption>Configuration parameters for unstructured (<code>"unstructured"</code>) volumes and their sampler objects.</caption>
+      <colgroup>
+      <col style="width: 21%" />
+      <col style="width: 24%" />
+      <col style="width: 12%" />
+      <col style="width: 39%" />
+      </colgroup>
+      <thead>
+      <tr class="header">
+      <th style="text-align: left;">Type</th>
+      <th style="text-align: left;">Name</th>
+      <th style="text-align: left;">Default</th>
+      <th style="text-align: left;">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">maxIteratorDepth</td>
+      <td style="text-align: left;">6</td>
+      <td style="text-align: left;">Do not descend further than to this BVH depth during interval iteration.</td>
+      </tr>
+      </tbody>
+      </table>
       <h3 id="vdb-volumes">VDB Volumes</h3>
       <p>VDB volumes implement a data structure that is very similar to the data structure outlined in Museth [1].</p>
       <p>The data structure is a hierarchical regular grid at its core: Nodes are regular grids, and each grid cell may either store a constant value (this is called a tile), or child pointers.</p>
@@ -717,14 +847,14 @@
       <li><p>Enable the use of industry-standard .vdb files created through the OpenVDB library.</p></li>
       <li><p>Compatibility with OpenVDB on a leaf data level, so that .vdb files may be loaded with minimal overhead.</p></li>
       </ul>
-      <p>VDB volumes have the following parameters:</p>
+      <p>VDB volumes are created by passing the type string <code>"vdb"</code> to <code>vklNewVolume</code>, and have the following parameters:</p>
       <table style="width:98%;">
       <caption>Configuration parameters for VDB (<code>"vdb"</code>) volumes.</caption>
       <colgroup>
       <col style="width: 16%" />
-      <col style="width: 21%" />
       <col style="width: 19%" />
-      <col style="width: 40%" />
+      <col style="width: 20%" />
+      <col style="width: 41%" />
       </colgroup>
       <thead>
       <tr class="header">
@@ -736,36 +866,30 @@
       </thead>
       <tbody>
       <tr class="odd">
-      <td style="text-align: left;">int</td>
-      <td style="text-align: left;">maxIteratorDepth</td>
-      <td style="text-align: left;">3</td>
-      <td style="text-align: left;">Do not descend further than to this depth during interval iteration. The maximum value is 3.</td>
-      </tr>
-      <tr class="even">
       <td style="text-align: left;">float[]</td>
       <td style="text-align: left;">indexToObject</td>
       <td style="text-align: left;">1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0</td>
       <td style="text-align: left;">An array of 12 values of type <code>float</code> that define the transformation from index space to object space. In index space, the grid is an axis-aligned regular grid, and leaf voxels have size (1,1,1). The first 9 values are interpreted as a row-major linear transformation matrix. The last 3 values are the translation of the grid origin.</td>
       </tr>
-      <tr class="odd">
+      <tr class="even">
       <td style="text-align: left;">uint32[]</td>
       <td style="text-align: left;">node.level</td>
       <td style="text-align: left;"></td>
       <td style="text-align: left;">For each input node, the level on which this node exists. Levels are counted from the root level (0) down. Input nodes may be on levels [1, <code>VKL_VDB_NUM_LEVELS-1</code>].</td>
       </tr>
-      <tr class="even">
+      <tr class="odd">
       <td style="text-align: left;">vec3i[]</td>
       <td style="text-align: left;">node.origin</td>
       <td style="text-align: left;"></td>
       <td style="text-align: left;">For each input node, the node origin index.</td>
       </tr>
-      <tr class="odd">
+      <tr class="even">
       <td style="text-align: left;">uint32[]</td>
       <td style="text-align: left;">node.format</td>
       <td style="text-align: left;"></td>
       <td style="text-align: left;">For each input node, the data format. Currently supported are <code>VKL_FORMAT_TILE</code> for tiles, and <code>VKL_FORMAT_CONSTANT_ZYX</code> for nodes that are dense regular grids, but temporally constant.</td>
       </tr>
-      <tr class="even">
+      <tr class="odd">
       <td style="text-align: left;">VKLData[]</td>
       <td style="text-align: left;">node.data</td>
       <td style="text-align: left;"></td>
@@ -810,11 +934,17 @@
       <td style="text-align: left;"><code>VKL_VDB_NUM_LEVELS</code>-1</td>
       <td style="text-align: left;">Do not descend further than to this depth during sampling.</td>
       </tr>
+      <tr class="even">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">maxIteratorDepth</td>
+      <td style="text-align: left;"><code>VKL_VDB_NUM_LEVELS</code>-2</td>
+      <td style="text-align: left;">Do not descend further than to this depth during iteration.</td>
+      </tr>
       </tbody>
       </table>
-      <p>VDB volumes support the following observers:</p>
+      <p>VDB sampler objects support the following observers:</p>
       <table style="width:98%;">
-      <caption>Observers supported by VDB (<code>"vdb"</code>) volumes.</caption>
+      <caption>Observers supported by sampler objects created on VDB (<code>"vdb"</code>) volumes.</caption>
       <colgroup>
       <col style="width: 21%" />
       <col style="width: 16%" />
@@ -856,6 +986,8 @@
       <p>where P is the particle position, p is the sample position, r is the radius and w is the weight.</p>
       <p>At each sample, the scalar field value is then computed as the sum of each radial basis function phi, for each particle that overlaps it.</p>
       <p>The Open VKL implementation is similar to direct evaluation of samples in Reda et al.[2]. It uses an Embree-built BVH with a custom traversal, similar to the method in [1].</p>
+      <p>Similar to unstructured volumes, a binary BVH is used internally to accelerate interval iteration. Intervals are found by intersecting BVH nodes up to a maximum level of the tree, configurable by the <code>maxIteratorDepth</code> parameter.</p>
+      <p>Particle volumes are created by passing the type string <code>"particle"</code> to <code>vklNewVolume</code>, and have the following parameters:</p>
       <table style="width:98%;">
       <caption>Configuration parameters for particle (<code>"particle"</code>) volumes.</caption>
       <colgroup>
@@ -911,271 +1043,403 @@
       </tr>
       </tbody>
       </table>
+      <p>The following additional parameters can be set both on <code>particle</code> volumes and their sampler objects (sampler object parameters default to volume parameters).</p>
+      <table style="width:97%;">
+      <caption>Configuration parameters for particle (<code>"particle"</code>) volumes and their sampler objects.</caption>
+      <colgroup>
+      <col style="width: 10%" />
+      <col style="width: 30%" />
+      <col style="width: 13%" />
+      <col style="width: 42%" />
+      </colgroup>
+      <thead>
+      <tr class="header">
+      <th style="text-align: left;">Type</th>
+      <th style="text-align: left;">Name</th>
+      <th style="text-align: left;">Default</th>
+      <th style="text-align: left;">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td style="text-align: left;">int</td>
+      <td style="text-align: left;">maxIteratorDepth</td>
+      <td style="text-align: left;">6</td>
+      <td style="text-align: left;">Do not descend further than to this BVH depth during interval iteration.</td>
+      </tr>
+      </tbody>
+      </table>
       <ol type="1">
       <li><p>Knoll, A., Wald, I., Navratil, P., Bowen, A., Reda, K., Papka, M.E. and Gaither, K. (2014), RBF Volume Ray Casting on Multicore and Manycore CPUs. Computer Graphics Forum, 33: 71-80. doi:10.1111/cgf.12363</p></li>
       <li><p>K. Reda, A. Knoll, K. Nomura, M. E. Papka, A. E. Johnson and J. Leigh, “Visualizing large-scale atomistic simulations in ultra-resolution immersive environments,” 2013 IEEE Symposium on Large-Scale Data Analysis and Visualization (LDAV), Atlanta, GA, 2013, pp. 59-65.</p></li>
       </ol>
       <h2 id="sampler-objects">Sampler Objects</h2>
       <p>Computing the value of a volume at an object space coordinate is done using the sampling API, and sampler objects. Sampler objects can be created using</p>
-      <div class="sourceCode" id="cb29"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb29-1"><a href="#cb29-1"></a>VKLSampler vklNewSampler(VKLVolume volume);</span></code></pre></div>
+      <div class="sourceCode" id="cb30"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb30-1"><a href="#cb30-1"></a>VKLSampler vklNewSampler(VKLVolume volume);</span></code></pre></div>
       <p>Sampler objects may then be parametrized with traversal parameters. Available parameters are defined by volumes, and are a subset of the volume parameters. As an example, <code>filter</code> can be set on both <code>vdb</code> volumes and their sampler objects. The volume parameter is used as the default for sampler objects. The sampler object parameter provides an override per ray. More detail on parameters can be found in the sections on volumes. Use <code>vklCommit()</code> to commit parameters to the sampler object.</p>
       <h2 id="sampling">Sampling</h2>
-      <p>The scalar API just takes a volume and coordinate, and returns a float value. NaN is returned for probe points outside the volume.</p>
-      <div class="sourceCode" id="cb30"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb30-1"><a href="#cb30-1"></a><span class="dt">float</span> vklComputeSample(VKLSampler sampler, <span class="at">const</span> vkl_vec3f *objectCoordinates);</span></code></pre></div>
+      <p>The scalar API takes a volume and coordinate, and returns a float value. NaN is returned for probe points outside the volume. The attribute index selects the scalar attribute of interest; not all volumes support multiple attributes.</p>
+      <div class="sourceCode" id="cb31"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb31-1"><a href="#cb31-1"></a><span class="dt">float</span> vklComputeSample(VKLSampler sampler,</span>
+      <span id="cb31-2"><a href="#cb31-2"></a>                       <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb31-3"><a href="#cb31-3"></a>                       <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
       <p>Vector versions allow sampling at 4, 8, or 16 positions at once. Depending on the machine type and Open VKL driver implementation, these can give greater performance. An active lane mask <code>valid</code> is passed in as an array of integers; set 0 for lanes to be ignored, -1 for active lanes.</p>
-      <div class="sourceCode" id="cb31"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb31-1"><a href="#cb31-1"></a><span class="dt">void</span> vklComputeSample4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb31-2"><a href="#cb31-2"></a>                       VKLSampler sampler,</span>
-      <span id="cb31-3"><a href="#cb31-3"></a>                       <span class="at">const</span> vkl_vvec3f4 *objectCoordinates,</span>
-      <span id="cb31-4"><a href="#cb31-4"></a>                       <span class="dt">float</span> *samples);</span>
-      <span id="cb31-5"><a href="#cb31-5"></a></span>
-      <span id="cb31-6"><a href="#cb31-6"></a><span class="dt">void</span> vklComputeSample8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb31-7"><a href="#cb31-7"></a>                       VKLSampler sampler,</span>
-      <span id="cb31-8"><a href="#cb31-8"></a>                       <span class="at">const</span> vkl_vvec3f8 *objectCoordinates,</span>
-      <span id="cb31-9"><a href="#cb31-9"></a>                       <span class="dt">float</span> *samples);</span>
-      <span id="cb31-10"><a href="#cb31-10"></a></span>
-      <span id="cb31-11"><a href="#cb31-11"></a><span class="dt">void</span> vklComputeSample16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb31-12"><a href="#cb31-12"></a>                        VKLSampler sampler,</span>
-      <span id="cb31-13"><a href="#cb31-13"></a>                        <span class="at">const</span> vkl_vvec3f16 *objectCoordinates,</span>
-      <span id="cb31-14"><a href="#cb31-14"></a>                        <span class="dt">float</span> *samples);</span></code></pre></div>
+      <div class="sourceCode" id="cb32"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb32-1"><a href="#cb32-1"></a><span class="dt">void</span> vklComputeSample4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb32-2"><a href="#cb32-2"></a>                       VKLSampler sampler,</span>
+      <span id="cb32-3"><a href="#cb32-3"></a>                       <span class="at">const</span> vkl_vvec3f4 *objectCoordinates,</span>
+      <span id="cb32-4"><a href="#cb32-4"></a>                       <span class="dt">float</span> *samples,</span>
+      <span id="cb32-5"><a href="#cb32-5"></a>                       <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span>
+      <span id="cb32-6"><a href="#cb32-6"></a></span>
+      <span id="cb32-7"><a href="#cb32-7"></a><span class="dt">void</span> vklComputeSample8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb32-8"><a href="#cb32-8"></a>                       VKLSampler sampler,</span>
+      <span id="cb32-9"><a href="#cb32-9"></a>                       <span class="at">const</span> vkl_vvec3f8 *objectCoordinates,</span>
+      <span id="cb32-10"><a href="#cb32-10"></a>                       <span class="dt">float</span> *samples,</span>
+      <span id="cb32-11"><a href="#cb32-11"></a>                       <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span>
+      <span id="cb32-12"><a href="#cb32-12"></a></span>
+      <span id="cb32-13"><a href="#cb32-13"></a><span class="dt">void</span> vklComputeSample16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb32-14"><a href="#cb32-14"></a>                        VKLSampler sampler,</span>
+      <span id="cb32-15"><a href="#cb32-15"></a>                        <span class="at">const</span> vkl_vvec3f16 *objectCoordinates,</span>
+      <span id="cb32-16"><a href="#cb32-16"></a>                        <span class="dt">float</span> *samples,</span>
+      <span id="cb32-17"><a href="#cb32-17"></a>                        <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
       <p>A stream version allows sampling an arbitrary number of positions at once. While the vector version requires coordinates to be provided in a structure-of-arrays layout, the stream version allows coordinates to be provided in an array-of-structures layout. Thus, the stream API can be used to avoid reformatting of data by the application. As with the vector versions, the stream API can give greater performance than the scalar API.</p>
-      <div class="sourceCode" id="cb32"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb32-1"><a href="#cb32-1"></a>  <span class="dt">void</span> vklComputeSampleN(VKLSampler sampler,</span>
-      <span id="cb32-2"><a href="#cb32-2"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> N,</span>
-      <span id="cb32-3"><a href="#cb32-3"></a>                         <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
-      <span id="cb32-4"><a href="#cb32-4"></a>                         <span class="dt">float</span> *samples);</span></code></pre></div>
+      <div class="sourceCode" id="cb33"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb33-1"><a href="#cb33-1"></a>  <span class="dt">void</span> vklComputeSampleN(VKLSampler sampler,</span>
+      <span id="cb33-2"><a href="#cb33-2"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> N,</span>
+      <span id="cb33-3"><a href="#cb33-3"></a>                         <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb33-4"><a href="#cb33-4"></a>                         <span class="dt">float</span> *samples,</span>
+      <span id="cb33-5"><a href="#cb33-5"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
+      <p>All of the above sampling APIs can be used, regardless of the driver’s native SIMD width.</p>
+      <h3 id="sampling-multiple-attributes">Sampling Multiple Attributes</h3>
+      <p>Open VKL provides additional APIs for sampling multiple scalar attributes in a single call through the <code>vklComputeSampleM*()</code> interfaces. Beyond convenience, these can give improved performance relative to the single attribute sampling APIs. A scalar API supports sampling <code>M</code> attributes specified by <code>attributeIndices</code> on a single object space coordinate:</p>
+      <div class="sourceCode" id="cb34"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb34-1"><a href="#cb34-1"></a><span class="dt">void</span> vklComputeSampleM(VKLSampler sampler,</span>
+      <span id="cb34-2"><a href="#cb34-2"></a>                       <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb34-3"><a href="#cb34-3"></a>                       <span class="dt">float</span> *samples,</span>
+      <span id="cb34-4"><a href="#cb34-4"></a>                       <span class="dt">unsigned</span> <span class="dt">int</span> M,</span>
+      <span id="cb34-5"><a href="#cb34-5"></a>                       <span class="at">const</span> <span class="dt">unsigned</span> <span class="dt">int</span> *attributeIndices);</span></code></pre></div>
+      <p>Vector versions allow sampling at 4, 8, or 16 positions at once across the <code>M</code> attributes:</p>
+      <div class="sourceCode" id="cb35"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1"></a><span class="dt">void</span> vklComputeSampleM4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb35-2"><a href="#cb35-2"></a>                        VKLSampler sampler,</span>
+      <span id="cb35-3"><a href="#cb35-3"></a>                        <span class="at">const</span> vkl_vvec3f4 *objectCoordinates,</span>
+      <span id="cb35-4"><a href="#cb35-4"></a>                        <span class="dt">float</span> *samples,</span>
+      <span id="cb35-5"><a href="#cb35-5"></a>                        <span class="dt">unsigned</span> <span class="dt">int</span> M,</span>
+      <span id="cb35-6"><a href="#cb35-6"></a>                        <span class="at">const</span> <span class="dt">unsigned</span> <span class="dt">int</span> *attributeIndices);</span>
+      <span id="cb35-7"><a href="#cb35-7"></a></span>
+      <span id="cb35-8"><a href="#cb35-8"></a><span class="dt">void</span> vklComputeSampleM8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb35-9"><a href="#cb35-9"></a>                        VKLSampler sampler,</span>
+      <span id="cb35-10"><a href="#cb35-10"></a>                        <span class="at">const</span> vkl_vvec3f8 *objectCoordinates,</span>
+      <span id="cb35-11"><a href="#cb35-11"></a>                        <span class="dt">float</span> *samples,</span>
+      <span id="cb35-12"><a href="#cb35-12"></a>                        <span class="dt">unsigned</span> <span class="dt">int</span> M,</span>
+      <span id="cb35-13"><a href="#cb35-13"></a>                        <span class="at">const</span> <span class="dt">unsigned</span> <span class="dt">int</span> *attributeIndices);</span>
+      <span id="cb35-14"><a href="#cb35-14"></a></span>
+      <span id="cb35-15"><a href="#cb35-15"></a><span class="dt">void</span> vklComputeSampleM16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb35-16"><a href="#cb35-16"></a>                         VKLSampler sampler,</span>
+      <span id="cb35-17"><a href="#cb35-17"></a>                         <span class="at">const</span> vkl_vvec3f16 *objectCoordinates,</span>
+      <span id="cb35-18"><a href="#cb35-18"></a>                         <span class="dt">float</span> *samples,</span>
+      <span id="cb35-19"><a href="#cb35-19"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> M,</span>
+      <span id="cb35-20"><a href="#cb35-20"></a>                         <span class="at">const</span> <span class="dt">unsigned</span> <span class="dt">int</span> *attributeIndices);</span></code></pre></div>
+      <p>The <code>[4, 8, 16] * M</code> sampled values are populated in the <code>samples</code> array in a structure-of-arrays layout, with all values for each attribute provided in sequence. That is, sample values <code>s_m,n</code> for the <code>m</code>th attribute and <code>n</code>th object coordinate will be populated as</p>
+      <div class="sourceCode" id="cb36"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb36-1"><a href="#cb36-1"></a>samples = [<span class="va">s_0</span>,<span class="dv">0</span>,   <span class="va">s_0</span>,<span class="dv">1</span>,   ..., <span class="va">s_0</span>,N-<span class="dv">1</span>,</span>
+      <span id="cb36-2"><a href="#cb36-2"></a>           <span class="va">s_1</span>,<span class="dv">0</span>,   <span class="va">s_1</span>,<span class="dv">1</span>,   ..., <span class="va">s_1</span>,N-<span class="dv">1</span>,</span>
+      <span id="cb36-3"><a href="#cb36-3"></a>           ...,</span>
+      <span id="cb36-4"><a href="#cb36-4"></a>           <span class="va">s_M</span>-<span class="dv">1</span>,<span class="dv">0</span>, <span class="va">s_M</span>-<span class="dv">1</span>,<span class="dv">1</span>, ..., <span class="va">s_M</span>-<span class="dv">1</span>,N-<span class="dv">1</span>]</span></code></pre></div>
+      <p>A stream version allows sampling an arbitrary number of positions at once across the <code>M</code> attributes. As with single attribute stream sampling, the <code>N</code> coordinates are provided in an array-of-structures layout.</p>
+      <div class="sourceCode" id="cb37"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1"></a><span class="dt">void</span> vklComputeSampleMN(VKLSampler sampler,</span>
+      <span id="cb37-2"><a href="#cb37-2"></a>                        <span class="dt">unsigned</span> <span class="dt">int</span> N,</span>
+      <span id="cb37-3"><a href="#cb37-3"></a>                        <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb37-4"><a href="#cb37-4"></a>                        <span class="dt">float</span> *samples,</span>
+      <span id="cb37-5"><a href="#cb37-5"></a>                        <span class="dt">unsigned</span> <span class="dt">int</span> M,</span>
+      <span id="cb37-6"><a href="#cb37-6"></a>                        <span class="at">const</span> <span class="dt">unsigned</span> <span class="dt">int</span> *attributeIndices);</span></code></pre></div>
+      <p>The <code>M * N</code> sampled values are populated in the <code>samples</code> array in an array-of-structures layout, with all attribute values for each coordinate provided in sequence as</p>
+      <div class="sourceCode" id="cb38"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb38-1"><a href="#cb38-1"></a>samples = [<span class="va">s_0</span>,<span class="dv">0</span>,   <span class="va">s_1</span>,<span class="dv">0</span>,   ..., <span class="va">s_M</span>-<span class="dv">1</span>,<span class="dv">0</span>,</span>
+      <span id="cb38-2"><a href="#cb38-2"></a>           <span class="va">s_0</span>,<span class="dv">1</span>,   <span class="va">s_1</span>,<span class="dv">1</span>,   ..., <span class="va">s_M</span>-<span class="dv">1</span>,<span class="dv">1</span>,</span>
+      <span id="cb38-3"><a href="#cb38-3"></a>           ...,</span>
+      <span id="cb38-4"><a href="#cb38-4"></a>           <span class="va">s_0</span>,N-<span class="dv">1</span>, <span class="va">s_1</span>,N-<span class="dv">1</span>, ..., <span class="va">s_M</span>-<span class="dv">1</span>,N-<span class="dv">1</span>]</span></code></pre></div>
       <p>All of the above sampling APIs can be used, regardless of the driver’s native SIMD width.</p>
       <h2 id="gradients">Gradients</h2>
       <p>In a very similar API to <code>vklComputeSample</code>, <code>vklComputeGradient</code> queries the value gradient at an object space coordinate. Again, a scalar API, now returning a vec3f instead of a float. NaN values are returned for points outside the volume.</p>
-      <div class="sourceCode" id="cb33"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb33-1"><a href="#cb33-1"></a>vkl_vec3f vklComputeGradient(VKLSampler sampler,</span>
-      <span id="cb33-2"><a href="#cb33-2"></a>                             <span class="at">const</span> vkl_vec3f *objectCoordinates);</span></code></pre></div>
+      <div class="sourceCode" id="cb39"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1"></a>vkl_vec3f vklComputeGradient(VKLSampler sampler,</span>
+      <span id="cb39-2"><a href="#cb39-2"></a>                             <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb39-3"><a href="#cb39-3"></a>                             <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
       <p>Vector versions are also provided:</p>
-      <div class="sourceCode" id="cb34"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb34-1"><a href="#cb34-1"></a><span class="dt">void</span> vklComputeGradient4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb34-2"><a href="#cb34-2"></a>                         VKLSampler sampler,</span>
-      <span id="cb34-3"><a href="#cb34-3"></a>                         <span class="at">const</span> vkl_vvec3f4 *objectCoordinates,</span>
-      <span id="cb34-4"><a href="#cb34-4"></a>                         vkl_vvec3f4 *gradients);</span>
-      <span id="cb34-5"><a href="#cb34-5"></a></span>
-      <span id="cb34-6"><a href="#cb34-6"></a><span class="dt">void</span> vklComputeGradient8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb34-7"><a href="#cb34-7"></a>                         VKLSampler sampler,</span>
-      <span id="cb34-8"><a href="#cb34-8"></a>                         <span class="at">const</span> vkl_vvec3f8 *objectCoordinates,</span>
-      <span id="cb34-9"><a href="#cb34-9"></a>                         vkl_vvec3f8 *gradients);</span>
-      <span id="cb34-10"><a href="#cb34-10"></a></span>
-      <span id="cb34-11"><a href="#cb34-11"></a><span class="dt">void</span> vklComputeGradient16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb34-12"><a href="#cb34-12"></a>                          VKLSampler sampler,</span>
-      <span id="cb34-13"><a href="#cb34-13"></a>                          <span class="at">const</span> vkl_vvec3f16 *objectCoordinates,</span>
-      <span id="cb34-14"><a href="#cb34-14"></a>                          vkl_vvec3f16 *gradients);</span></code></pre></div>
+      <div class="sourceCode" id="cb40"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb40-1"><a href="#cb40-1"></a><span class="dt">void</span> vklComputeGradient4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb40-2"><a href="#cb40-2"></a>                         VKLSampler sampler,</span>
+      <span id="cb40-3"><a href="#cb40-3"></a>                         <span class="at">const</span> vkl_vvec3f4 *objectCoordinates,</span>
+      <span id="cb40-4"><a href="#cb40-4"></a>                         vkl_vvec3f4 *gradients,</span>
+      <span id="cb40-5"><a href="#cb40-5"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span>
+      <span id="cb40-6"><a href="#cb40-6"></a></span>
+      <span id="cb40-7"><a href="#cb40-7"></a><span class="dt">void</span> vklComputeGradient8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb40-8"><a href="#cb40-8"></a>                         VKLSampler sampler,</span>
+      <span id="cb40-9"><a href="#cb40-9"></a>                         <span class="at">const</span> vkl_vvec3f8 *objectCoordinates,</span>
+      <span id="cb40-10"><a href="#cb40-10"></a>                         vkl_vvec3f8 *gradients,</span>
+      <span id="cb40-11"><a href="#cb40-11"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span>
+      <span id="cb40-12"><a href="#cb40-12"></a></span>
+      <span id="cb40-13"><a href="#cb40-13"></a><span class="dt">void</span> vklComputeGradient16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb40-14"><a href="#cb40-14"></a>                          VKLSampler sampler,</span>
+      <span id="cb40-15"><a href="#cb40-15"></a>                          <span class="at">const</span> vkl_vvec3f16 *objectCoordinates,</span>
+      <span id="cb40-16"><a href="#cb40-16"></a>                          vkl_vvec3f16 *gradients,</span>
+      <span id="cb40-17"><a href="#cb40-17"></a>                          <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
       <p>Finally, a stream version is provided:</p>
-      <div class="sourceCode" id="cb35"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1"></a><span class="dt">void</span> vklComputeGradientN(VKLSampler sampler,</span>
-      <span id="cb35-2"><a href="#cb35-2"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> N,</span>
-      <span id="cb35-3"><a href="#cb35-3"></a>                         <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
-      <span id="cb35-4"><a href="#cb35-4"></a>                         vkl_vec3f *gradients);</span></code></pre></div>
+      <div class="sourceCode" id="cb41"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb41-1"><a href="#cb41-1"></a><span class="dt">void</span> vklComputeGradientN(VKLSampler sampler,</span>
+      <span id="cb41-2"><a href="#cb41-2"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> N,</span>
+      <span id="cb41-3"><a href="#cb41-3"></a>                         <span class="at">const</span> vkl_vec3f *objectCoordinates,</span>
+      <span id="cb41-4"><a href="#cb41-4"></a>                         vkl_vec3f *gradients,</span>
+      <span id="cb41-5"><a href="#cb41-5"></a>                         <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex);</span></code></pre></div>
       <p>All of the above gradient APIs can be used, regardless of the driver’s native SIMD width.</p>
       <h2 id="iterators">Iterators</h2>
-      <p>Open VKL has APIs to search for particular volume values along a ray. Queries can be for ranges of volume values (<code>vklIterateInterval</code>) or for particular values (<code>vklIterateHit</code>). The desired values are set in a <code>VKLValueSelector</code>, which needs to be created, filled in with values, and then committed.</p>
-      <div class="sourceCode" id="cb36"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb36-1"><a href="#cb36-1"></a>VKLValueSelector vklNewValueSelector(VKLVolume volume);</span>
-      <span id="cb36-2"><a href="#cb36-2"></a></span>
-      <span id="cb36-3"><a href="#cb36-3"></a><span class="dt">void</span> vklValueSelectorSetRanges(VKLValueSelector valueSelector,</span>
-      <span id="cb36-4"><a href="#cb36-4"></a>                               <span class="dt">size_t</span> numRanges,</span>
-      <span id="cb36-5"><a href="#cb36-5"></a>                               <span class="at">const</span> vkl_range1f *ranges);</span>
-      <span id="cb36-6"><a href="#cb36-6"></a></span>
-      <span id="cb36-7"><a href="#cb36-7"></a><span class="dt">void</span> vklValueSelectorSetValues(VKLValueSelector valueSelector,</span>
-      <span id="cb36-8"><a href="#cb36-8"></a>                               <span class="dt">size_t</span> numValues,</span>
-      <span id="cb36-9"><a href="#cb36-9"></a>                               <span class="at">const</span> <span class="dt">float</span> *values);</span></code></pre></div>
+      <p>Open VKL has APIs to search for particular volume values along a ray. Queries can be for ranges of volume values (<code>vklIterateInterval</code>) or for particular values (<code>vklIterateHit</code>). Only the first volume attribute is currently considered in the iterator APIs.</p>
+      <p>The desired values are set in a <code>VKLValueSelector</code>, which needs to be created, filled in with values, and then committed.</p>
+      <div class="sourceCode" id="cb42"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb42-1"><a href="#cb42-1"></a>VKLValueSelector vklNewValueSelector(VKLVolume volume);</span>
+      <span id="cb42-2"><a href="#cb42-2"></a></span>
+      <span id="cb42-3"><a href="#cb42-3"></a><span class="dt">void</span> vklValueSelectorSetRanges(VKLValueSelector valueSelector,</span>
+      <span id="cb42-4"><a href="#cb42-4"></a>                               <span class="dt">size_t</span> numRanges,</span>
+      <span id="cb42-5"><a href="#cb42-5"></a>                               <span class="at">const</span> vkl_range1f *ranges);</span>
+      <span id="cb42-6"><a href="#cb42-6"></a></span>
+      <span id="cb42-7"><a href="#cb42-7"></a><span class="dt">void</span> vklValueSelectorSetValues(VKLValueSelector valueSelector,</span>
+      <span id="cb42-8"><a href="#cb42-8"></a>                               <span class="dt">size_t</span> numValues,</span>
+      <span id="cb42-9"><a href="#cb42-9"></a>                               <span class="at">const</span> <span class="dt">float</span> *values);</span></code></pre></div>
       <p>To query an interval, a <code>VKLIntervalIterator</code> of scalar or vector width must be initialized with <code>vklInitIntervalIterator</code>.</p>
-      <div class="sourceCode" id="cb37"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1"></a>VKLIntervalIterator vklInitIntervalIterator(VKLVolume volume,</span>
-      <span id="cb37-2"><a href="#cb37-2"></a>                                            <span class="at">const</span> vkl_vec3f *origin,</span>
-      <span id="cb37-3"><a href="#cb37-3"></a>                                            <span class="at">const</span> vkl_vec3f *direction,</span>
-      <span id="cb37-4"><a href="#cb37-4"></a>                                            <span class="at">const</span> vkl_range1f *tRange,</span>
-      <span id="cb37-5"><a href="#cb37-5"></a>                                            VKLValueSelector valueSelector,</span>
-      <span id="cb37-6"><a href="#cb37-6"></a>                                            <span class="dt">void</span> *buffer);</span>
-      <span id="cb37-7"><a href="#cb37-7"></a></span>
-      <span id="cb37-8"><a href="#cb37-8"></a>VKLIntervalIterator4 vklInitIntervalIterator4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb37-9"><a href="#cb37-9"></a>                                              VKLVolume volume,</span>
-      <span id="cb37-10"><a href="#cb37-10"></a>                                              <span class="at">const</span> vkl_vvec3f4 *origin,</span>
-      <span id="cb37-11"><a href="#cb37-11"></a>                                              <span class="at">const</span> vkl_vvec3f4 *direction,</span>
-      <span id="cb37-12"><a href="#cb37-12"></a>                                              <span class="at">const</span> vkl_vrange1f4 *tRange,</span>
-      <span id="cb37-13"><a href="#cb37-13"></a>                                              VKLValueSelector valueSelector,</span>
-      <span id="cb37-14"><a href="#cb37-14"></a>                                              <span class="dt">void</span> *buffer);</span>
-      <span id="cb37-15"><a href="#cb37-15"></a></span>
-      <span id="cb37-16"><a href="#cb37-16"></a>VKLIntervalIterator8 vklInitIntervalIterator8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb37-17"><a href="#cb37-17"></a>                                              VKLVolume volume,</span>
-      <span id="cb37-18"><a href="#cb37-18"></a>                                              <span class="at">const</span> vkl_vvec3f8 *origin,</span>
-      <span id="cb37-19"><a href="#cb37-19"></a>                                              <span class="at">const</span> vkl_vvec3f8 *direction,</span>
-      <span id="cb37-20"><a href="#cb37-20"></a>                                              <span class="at">const</span> vkl_vrange1f8 *tRange,</span>
-      <span id="cb37-21"><a href="#cb37-21"></a>                                              VKLValueSelector valueSelector,</span>
-      <span id="cb37-22"><a href="#cb37-22"></a>                                              <span class="dt">void</span> *buffer);</span>
-      <span id="cb37-23"><a href="#cb37-23"></a></span>
-      <span id="cb37-24"><a href="#cb37-24"></a>VKLIntervalIterator16 vklInitIntervalIterator16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb37-25"><a href="#cb37-25"></a>                                                VKLVolume volume,</span>
-      <span id="cb37-26"><a href="#cb37-26"></a>                                                <span class="at">const</span> vkl_vvec3f16 *origin,</span>
-      <span id="cb37-27"><a href="#cb37-27"></a>                                                <span class="at">const</span> vkl_vvec3f16 *direction,</span>
-      <span id="cb37-28"><a href="#cb37-28"></a>                                                <span class="at">const</span> vkl_vrange1f16 *tRange,</span>
-      <span id="cb37-29"><a href="#cb37-29"></a>                                                VKLValueSelector valueSelector,</span>
-      <span id="cb37-30"><a href="#cb37-30"></a>                                                <span class="dt">void</span> *buffer);</span></code></pre></div>
+      <div class="sourceCode" id="cb43"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb43-1"><a href="#cb43-1"></a>VKLIntervalIterator vklInitIntervalIterator(VKLSampler sampler,</span>
+      <span id="cb43-2"><a href="#cb43-2"></a>                                            <span class="at">const</span> vkl_vec3f *origin,</span>
+      <span id="cb43-3"><a href="#cb43-3"></a>                                            <span class="at">const</span> vkl_vec3f *direction,</span>
+      <span id="cb43-4"><a href="#cb43-4"></a>                                            <span class="at">const</span> vkl_range1f *tRange,</span>
+      <span id="cb43-5"><a href="#cb43-5"></a>                                            VKLValueSelector valueSelector,</span>
+      <span id="cb43-6"><a href="#cb43-6"></a>                                            <span class="dt">void</span> *buffer);</span>
+      <span id="cb43-7"><a href="#cb43-7"></a></span>
+      <span id="cb43-8"><a href="#cb43-8"></a>VKLIntervalIterator4 vklInitIntervalIterator4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb43-9"><a href="#cb43-9"></a>                                              VKLSampler sampler,</span>
+      <span id="cb43-10"><a href="#cb43-10"></a>                                              <span class="at">const</span> vkl_vvec3f4 *origin,</span>
+      <span id="cb43-11"><a href="#cb43-11"></a>                                              <span class="at">const</span> vkl_vvec3f4 *direction,</span>
+      <span id="cb43-12"><a href="#cb43-12"></a>                                              <span class="at">const</span> vkl_vrange1f4 *tRange,</span>
+      <span id="cb43-13"><a href="#cb43-13"></a>                                              VKLValueSelector valueSelector,</span>
+      <span id="cb43-14"><a href="#cb43-14"></a>                                              <span class="dt">void</span> *buffer);</span>
+      <span id="cb43-15"><a href="#cb43-15"></a></span>
+      <span id="cb43-16"><a href="#cb43-16"></a>VKLIntervalIterator8 vklInitIntervalIterator8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb43-17"><a href="#cb43-17"></a>                                              VKLSampler sampler,</span>
+      <span id="cb43-18"><a href="#cb43-18"></a>                                              <span class="at">const</span> vkl_vvec3f8 *origin,</span>
+      <span id="cb43-19"><a href="#cb43-19"></a>                                              <span class="at">const</span> vkl_vvec3f8 *direction,</span>
+      <span id="cb43-20"><a href="#cb43-20"></a>                                              <span class="at">const</span> vkl_vrange1f8 *tRange,</span>
+      <span id="cb43-21"><a href="#cb43-21"></a>                                              VKLValueSelector valueSelector,</span>
+      <span id="cb43-22"><a href="#cb43-22"></a>                                              <span class="dt">void</span> *buffer);</span>
+      <span id="cb43-23"><a href="#cb43-23"></a></span>
+      <span id="cb43-24"><a href="#cb43-24"></a>VKLIntervalIterator16 vklInitIntervalIterator16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb43-25"><a href="#cb43-25"></a>                                                VKLSampler sampler,</span>
+      <span id="cb43-26"><a href="#cb43-26"></a>                                                <span class="at">const</span> vkl_vvec3f16 *origin,</span>
+      <span id="cb43-27"><a href="#cb43-27"></a>                                                <span class="at">const</span> vkl_vvec3f16 *direction,</span>
+      <span id="cb43-28"><a href="#cb43-28"></a>                                                <span class="at">const</span> vkl_vrange1f16 *tRange,</span>
+      <span id="cb43-29"><a href="#cb43-29"></a>                                                VKLValueSelector valueSelector,</span>
+      <span id="cb43-30"><a href="#cb43-30"></a>                                                <span class="dt">void</span> *buffer);</span></code></pre></div>
       <p>Open VKL places the iterator struct into a user-provided buffer, and the returned handle is essentially a pointer into this buffer. This means that the iterator handle must not be used after the buffer ceases to exist. Copying iterator buffers is currently not supported.</p>
       <p>The required size, in bytes, of the buffer can be queried with</p>
-      <div class="sourceCode" id="cb38"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb38-1"><a href="#cb38-1"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize(VKLVolume volume);</span>
-      <span id="cb38-2"><a href="#cb38-2"></a></span>
-      <span id="cb38-3"><a href="#cb38-3"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize4(VKLVolume volume);</span>
-      <span id="cb38-4"><a href="#cb38-4"></a></span>
-      <span id="cb38-5"><a href="#cb38-5"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize8(VKLVolume volume);</span>
-      <span id="cb38-6"><a href="#cb38-6"></a></span>
-      <span id="cb38-7"><a href="#cb38-7"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize16(VKLVolume volume);</span></code></pre></div>
-      <p>The values these functions return depend on the volume type rather than the particular <code>VKLVolume</code> instance.</p>
+      <div class="sourceCode" id="cb44"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb44-1"><a href="#cb44-1"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize(VKLSampler sampler);</span>
+      <span id="cb44-2"><a href="#cb44-2"></a></span>
+      <span id="cb44-3"><a href="#cb44-3"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize4(VKLSampler sampler);</span>
+      <span id="cb44-4"><a href="#cb44-4"></a></span>
+      <span id="cb44-5"><a href="#cb44-5"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize8(VKLSampler sampler);</span>
+      <span id="cb44-6"><a href="#cb44-6"></a></span>
+      <span id="cb44-7"><a href="#cb44-7"></a><span class="dt">size_t</span> vklGetIntervalIteratorSize16(VKLSampler sampler);</span></code></pre></div>
+      <p>The values these functions return may change depending on the parameters set on <code>sampler</code>.</p>
       <p>Open VKL also provides a conservative maximum size over all volume types as a preprocessor definition (<code>VKL_MAX_INTERVAL_ITERATOR_SIZE</code>). This is particularly useful for stack-based allocation in ISPC. Open VKL will attempt to detect the native vector width using <code>TARGET_WIDTH</code>, which is defined in recent versions of ISPC.</p>
       <p>Intervals can then be processed by calling <code>vklIterateInterval</code> as long as the returned lane masks indicates that the iterator is still within the volume:</p>
-      <div class="sourceCode" id="cb39"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1"></a><span class="dt">int</span> vklIterateInterval(VKLIntervalIterator iterator,</span>
-      <span id="cb39-2"><a href="#cb39-2"></a>                       VKLInterval *interval);</span>
-      <span id="cb39-3"><a href="#cb39-3"></a></span>
-      <span id="cb39-4"><a href="#cb39-4"></a><span class="dt">void</span> vklIterateInterval4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb39-5"><a href="#cb39-5"></a>                         VKLIntervalIterator4 iterator,</span>
-      <span id="cb39-6"><a href="#cb39-6"></a>                         VKLInterval4 *interval,</span>
-      <span id="cb39-7"><a href="#cb39-7"></a>                         <span class="dt">int</span> *result);</span>
-      <span id="cb39-8"><a href="#cb39-8"></a></span>
-      <span id="cb39-9"><a href="#cb39-9"></a><span class="dt">void</span> vklIterateInterval8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb39-10"><a href="#cb39-10"></a>                         VKLIntervalIterator8 iterator,</span>
-      <span id="cb39-11"><a href="#cb39-11"></a>                         VKLInterval8 *interval,</span>
-      <span id="cb39-12"><a href="#cb39-12"></a>                         <span class="dt">int</span> *result);</span>
-      <span id="cb39-13"><a href="#cb39-13"></a></span>
-      <span id="cb39-14"><a href="#cb39-14"></a><span class="dt">void</span> vklIterateInterval16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb39-15"><a href="#cb39-15"></a>                          VKLIntervalIterator16 iterator,</span>
-      <span id="cb39-16"><a href="#cb39-16"></a>                          VKLInterval16 *interval,</span>
-      <span id="cb39-17"><a href="#cb39-17"></a>                          <span class="dt">int</span> *result);</span></code></pre></div>
+      <div class="sourceCode" id="cb45"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb45-1"><a href="#cb45-1"></a><span class="dt">int</span> vklIterateInterval(VKLIntervalIterator iterator,</span>
+      <span id="cb45-2"><a href="#cb45-2"></a>                       VKLInterval *interval);</span>
+      <span id="cb45-3"><a href="#cb45-3"></a></span>
+      <span id="cb45-4"><a href="#cb45-4"></a><span class="dt">void</span> vklIterateInterval4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb45-5"><a href="#cb45-5"></a>                         VKLIntervalIterator4 iterator,</span>
+      <span id="cb45-6"><a href="#cb45-6"></a>                         VKLInterval4 *interval,</span>
+      <span id="cb45-7"><a href="#cb45-7"></a>                         <span class="dt">int</span> *result);</span>
+      <span id="cb45-8"><a href="#cb45-8"></a></span>
+      <span id="cb45-9"><a href="#cb45-9"></a><span class="dt">void</span> vklIterateInterval8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb45-10"><a href="#cb45-10"></a>                         VKLIntervalIterator8 iterator,</span>
+      <span id="cb45-11"><a href="#cb45-11"></a>                         VKLInterval8 *interval,</span>
+      <span id="cb45-12"><a href="#cb45-12"></a>                         <span class="dt">int</span> *result);</span>
+      <span id="cb45-13"><a href="#cb45-13"></a></span>
+      <span id="cb45-14"><a href="#cb45-14"></a><span class="dt">void</span> vklIterateInterval16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb45-15"><a href="#cb45-15"></a>                          VKLIntervalIterator16 iterator,</span>
+      <span id="cb45-16"><a href="#cb45-16"></a>                          VKLInterval16 *interval,</span>
+      <span id="cb45-17"><a href="#cb45-17"></a>                          <span class="dt">int</span> *result);</span></code></pre></div>
       <p>The intervals returned have a t-value range, a value range, and a <code>nominalDeltaT</code> which is approximately the step size that should be used to walk through the interval, if desired. The number and length of intervals returned is volume type implementation dependent. There is currently no way of requesting a particular splitting.</p>
-      <div class="sourceCode" id="cb40"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb40-1"><a href="#cb40-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb40-2"><a href="#cb40-2"></a>{</span>
-      <span id="cb40-3"><a href="#cb40-3"></a>  vkl_range1f tRange;</span>
-      <span id="cb40-4"><a href="#cb40-4"></a>  vkl_range1f valueRange;</span>
-      <span id="cb40-5"><a href="#cb40-5"></a>  <span class="dt">float</span> nominalDeltaT;</span>
-      <span id="cb40-6"><a href="#cb40-6"></a>} VKLInterval;</span>
-      <span id="cb40-7"><a href="#cb40-7"></a></span>
-      <span id="cb40-8"><a href="#cb40-8"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb40-9"><a href="#cb40-9"></a>{</span>
-      <span id="cb40-10"><a href="#cb40-10"></a>  vkl_vrange1f4 tRange;</span>
-      <span id="cb40-11"><a href="#cb40-11"></a>  vkl_vrange1f4 valueRange;</span>
-      <span id="cb40-12"><a href="#cb40-12"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">4</span>];</span>
-      <span id="cb40-13"><a href="#cb40-13"></a>} VKLInterval4;</span>
-      <span id="cb40-14"><a href="#cb40-14"></a></span>
-      <span id="cb40-15"><a href="#cb40-15"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb40-16"><a href="#cb40-16"></a>{</span>
-      <span id="cb40-17"><a href="#cb40-17"></a>  vkl_vrange1f8 tRange;</span>
-      <span id="cb40-18"><a href="#cb40-18"></a>  vkl_vrange1f8 valueRange;</span>
-      <span id="cb40-19"><a href="#cb40-19"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">8</span>];</span>
-      <span id="cb40-20"><a href="#cb40-20"></a>} VKLInterval8;</span>
-      <span id="cb40-21"><a href="#cb40-21"></a></span>
-      <span id="cb40-22"><a href="#cb40-22"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb40-23"><a href="#cb40-23"></a>{</span>
-      <span id="cb40-24"><a href="#cb40-24"></a>  vkl_vrange1f16 tRange;</span>
-      <span id="cb40-25"><a href="#cb40-25"></a>  vkl_vrange1f16 valueRange;</span>
-      <span id="cb40-26"><a href="#cb40-26"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">16</span>];</span>
-      <span id="cb40-27"><a href="#cb40-27"></a>} VKLInterval16;</span></code></pre></div>
+      <div class="sourceCode" id="cb46"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb46-1"><a href="#cb46-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb46-2"><a href="#cb46-2"></a>{</span>
+      <span id="cb46-3"><a href="#cb46-3"></a>  vkl_range1f tRange;</span>
+      <span id="cb46-4"><a href="#cb46-4"></a>  vkl_range1f valueRange;</span>
+      <span id="cb46-5"><a href="#cb46-5"></a>  <span class="dt">float</span> nominalDeltaT;</span>
+      <span id="cb46-6"><a href="#cb46-6"></a>} VKLInterval;</span>
+      <span id="cb46-7"><a href="#cb46-7"></a></span>
+      <span id="cb46-8"><a href="#cb46-8"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb46-9"><a href="#cb46-9"></a>{</span>
+      <span id="cb46-10"><a href="#cb46-10"></a>  vkl_vrange1f4 tRange;</span>
+      <span id="cb46-11"><a href="#cb46-11"></a>  vkl_vrange1f4 valueRange;</span>
+      <span id="cb46-12"><a href="#cb46-12"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">4</span>];</span>
+      <span id="cb46-13"><a href="#cb46-13"></a>} VKLInterval4;</span>
+      <span id="cb46-14"><a href="#cb46-14"></a></span>
+      <span id="cb46-15"><a href="#cb46-15"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb46-16"><a href="#cb46-16"></a>{</span>
+      <span id="cb46-17"><a href="#cb46-17"></a>  vkl_vrange1f8 tRange;</span>
+      <span id="cb46-18"><a href="#cb46-18"></a>  vkl_vrange1f8 valueRange;</span>
+      <span id="cb46-19"><a href="#cb46-19"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">8</span>];</span>
+      <span id="cb46-20"><a href="#cb46-20"></a>} VKLInterval8;</span>
+      <span id="cb46-21"><a href="#cb46-21"></a></span>
+      <span id="cb46-22"><a href="#cb46-22"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb46-23"><a href="#cb46-23"></a>{</span>
+      <span id="cb46-24"><a href="#cb46-24"></a>  vkl_vrange1f16 tRange;</span>
+      <span id="cb46-25"><a href="#cb46-25"></a>  vkl_vrange1f16 valueRange;</span>
+      <span id="cb46-26"><a href="#cb46-26"></a>  <span class="dt">float</span> nominalDeltaT[<span class="dv">16</span>];</span>
+      <span id="cb46-27"><a href="#cb46-27"></a>} VKLInterval16;</span></code></pre></div>
       <p>Querying for particular values is done using a <code>VKLHitIterator</code> in much the same fashion. This API could be used, for example, to find isosurfaces. Again, a user allocated buffer must be provided, and a <code>VKLHitIterator</code> of the desired width must be initialized:</p>
-      <div class="sourceCode" id="cb41"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb41-1"><a href="#cb41-1"></a>VKLHitIterator vklInitHitIterator(VKLVolume volume,</span>
-      <span id="cb41-2"><a href="#cb41-2"></a>                                  <span class="at">const</span> vkl_vec3f *origin,</span>
-      <span id="cb41-3"><a href="#cb41-3"></a>                                  <span class="at">const</span> vkl_vec3f *direction,</span>
-      <span id="cb41-4"><a href="#cb41-4"></a>                                  <span class="at">const</span> vkl_range1f *tRange,</span>
-      <span id="cb41-5"><a href="#cb41-5"></a>                                  VKLValueSelector valueSelector,</span>
-      <span id="cb41-6"><a href="#cb41-6"></a>                                  <span class="dt">void</span> *buffer);</span>
-      <span id="cb41-7"><a href="#cb41-7"></a></span>
-      <span id="cb41-8"><a href="#cb41-8"></a>VKLHitIterator4 vklInitHitIterator4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb41-9"><a href="#cb41-9"></a>                         VKLVolume volume,</span>
-      <span id="cb41-10"><a href="#cb41-10"></a>                         <span class="at">const</span> vkl_vvec3f4 *origin,</span>
-      <span id="cb41-11"><a href="#cb41-11"></a>                         <span class="at">const</span> vkl_vvec3f4 *direction,</span>
-      <span id="cb41-12"><a href="#cb41-12"></a>                         <span class="at">const</span> vkl_vrange1f4 *tRange,</span>
-      <span id="cb41-13"><a href="#cb41-13"></a>                         VKLValueSelector valueSelector,</span>
-      <span id="cb41-14"><a href="#cb41-14"></a>                         <span class="dt">void</span> *buffer);</span>
-      <span id="cb41-15"><a href="#cb41-15"></a></span>
-      <span id="cb41-16"><a href="#cb41-16"></a>VKLHitIterator8 vklInitHitIterator8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb41-17"><a href="#cb41-17"></a>                         VKLVolume volume,</span>
-      <span id="cb41-18"><a href="#cb41-18"></a>                         <span class="at">const</span> vkl_vvec3f8 *origin,</span>
-      <span id="cb41-19"><a href="#cb41-19"></a>                         <span class="at">const</span> vkl_vvec3f8 *direction,</span>
-      <span id="cb41-20"><a href="#cb41-20"></a>                         <span class="at">const</span> vkl_vrange1f8 *tRange,</span>
-      <span id="cb41-21"><a href="#cb41-21"></a>                         VKLValueSelector valueSelector,</span>
-      <span id="cb41-22"><a href="#cb41-22"></a>                         <span class="dt">void</span> *buffer);</span>
-      <span id="cb41-23"><a href="#cb41-23"></a></span>
-      <span id="cb41-24"><a href="#cb41-24"></a>VKLHitIterator16 vklInitHitIterator16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb41-25"><a href="#cb41-25"></a>                          VKLVolume volume,</span>
-      <span id="cb41-26"><a href="#cb41-26"></a>                          <span class="at">const</span> vkl_vvec3f16 *origin,</span>
-      <span id="cb41-27"><a href="#cb41-27"></a>                          <span class="at">const</span> vkl_vvec3f16 *direction,</span>
-      <span id="cb41-28"><a href="#cb41-28"></a>                          <span class="at">const</span> vkl_vrange1f16 *tRange,</span>
-      <span id="cb41-29"><a href="#cb41-29"></a>                          VKLValueSelector valueSelector,</span>
-      <span id="cb41-30"><a href="#cb41-30"></a>                          <span class="dt">void</span> *buffer);</span></code></pre></div>
+      <div class="sourceCode" id="cb47"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb47-1"><a href="#cb47-1"></a>VKLHitIterator vklInitHitIterator(VKLSampler sampler,</span>
+      <span id="cb47-2"><a href="#cb47-2"></a>                                  <span class="at">const</span> vkl_vec3f *origin,</span>
+      <span id="cb47-3"><a href="#cb47-3"></a>                                  <span class="at">const</span> vkl_vec3f *direction,</span>
+      <span id="cb47-4"><a href="#cb47-4"></a>                                  <span class="at">const</span> vkl_range1f *tRange,</span>
+      <span id="cb47-5"><a href="#cb47-5"></a>                                  VKLValueSelector valueSelector,</span>
+      <span id="cb47-6"><a href="#cb47-6"></a>                                  <span class="dt">void</span> *buffer);</span>
+      <span id="cb47-7"><a href="#cb47-7"></a></span>
+      <span id="cb47-8"><a href="#cb47-8"></a>VKLHitIterator4 vklInitHitIterator4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb47-9"><a href="#cb47-9"></a>                         VKLSampler sampler,</span>
+      <span id="cb47-10"><a href="#cb47-10"></a>                         <span class="at">const</span> vkl_vvec3f4 *origin,</span>
+      <span id="cb47-11"><a href="#cb47-11"></a>                         <span class="at">const</span> vkl_vvec3f4 *direction,</span>
+      <span id="cb47-12"><a href="#cb47-12"></a>                         <span class="at">const</span> vkl_vrange1f4 *tRange,</span>
+      <span id="cb47-13"><a href="#cb47-13"></a>                         VKLValueSelector valueSelector,</span>
+      <span id="cb47-14"><a href="#cb47-14"></a>                         <span class="dt">void</span> *buffer);</span>
+      <span id="cb47-15"><a href="#cb47-15"></a></span>
+      <span id="cb47-16"><a href="#cb47-16"></a>VKLHitIterator8 vklInitHitIterator8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb47-17"><a href="#cb47-17"></a>                         VKLSampler sampler,</span>
+      <span id="cb47-18"><a href="#cb47-18"></a>                         <span class="at">const</span> vkl_vvec3f8 *origin,</span>
+      <span id="cb47-19"><a href="#cb47-19"></a>                         <span class="at">const</span> vkl_vvec3f8 *direction,</span>
+      <span id="cb47-20"><a href="#cb47-20"></a>                         <span class="at">const</span> vkl_vrange1f8 *tRange,</span>
+      <span id="cb47-21"><a href="#cb47-21"></a>                         VKLValueSelector valueSelector,</span>
+      <span id="cb47-22"><a href="#cb47-22"></a>                         <span class="dt">void</span> *buffer);</span>
+      <span id="cb47-23"><a href="#cb47-23"></a></span>
+      <span id="cb47-24"><a href="#cb47-24"></a>VKLHitIterator16 vklInitHitIterator16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb47-25"><a href="#cb47-25"></a>                          VKLSampler sampler,</span>
+      <span id="cb47-26"><a href="#cb47-26"></a>                          <span class="at">const</span> vkl_vvec3f16 *origin,</span>
+      <span id="cb47-27"><a href="#cb47-27"></a>                          <span class="at">const</span> vkl_vvec3f16 *direction,</span>
+      <span id="cb47-28"><a href="#cb47-28"></a>                          <span class="at">const</span> vkl_vrange1f16 *tRange,</span>
+      <span id="cb47-29"><a href="#cb47-29"></a>                          VKLValueSelector valueSelector,</span>
+      <span id="cb47-30"><a href="#cb47-30"></a>                          <span class="dt">void</span> *buffer);</span></code></pre></div>
       <p>Buffer size can be queried with</p>
-      <div class="sourceCode" id="cb42"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb42-1"><a href="#cb42-1"></a><span class="dt">size_t</span> vklGetHitIteratorSize(VKLVolume volume);</span>
-      <span id="cb42-2"><a href="#cb42-2"></a></span>
-      <span id="cb42-3"><a href="#cb42-3"></a><span class="dt">size_t</span> vklGetHitIteratorSize4(VKLVolume volume);</span>
-      <span id="cb42-4"><a href="#cb42-4"></a></span>
-      <span id="cb42-5"><a href="#cb42-5"></a><span class="dt">size_t</span> vklGetHitIteratorSize8(VKLVolume volume);</span>
-      <span id="cb42-6"><a href="#cb42-6"></a></span>
-      <span id="cb42-7"><a href="#cb42-7"></a><span class="dt">size_t</span> vklGetHitIteratorSize16(VKLVolume volume);</span></code></pre></div>
+      <div class="sourceCode" id="cb48"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb48-1"><a href="#cb48-1"></a><span class="dt">size_t</span> vklGetHitIteratorSize(VKLSampler sampler);</span>
+      <span id="cb48-2"><a href="#cb48-2"></a></span>
+      <span id="cb48-3"><a href="#cb48-3"></a><span class="dt">size_t</span> vklGetHitIteratorSize4(VKLSampler sampler);</span>
+      <span id="cb48-4"><a href="#cb48-4"></a></span>
+      <span id="cb48-5"><a href="#cb48-5"></a><span class="dt">size_t</span> vklGetHitIteratorSize8(VKLSampler sampler);</span>
+      <span id="cb48-6"><a href="#cb48-6"></a></span>
+      <span id="cb48-7"><a href="#cb48-7"></a><span class="dt">size_t</span> vklGetHitIteratorSize16(VKLSampler sampler);</span></code></pre></div>
       <p>Open VKL also provides the macro <code>VKL_MAX_HIT_ITERATOR_SIZE</code> as a conservative estimate.</p>
       <p>Hits are then queried by looping a call to <code>vklIterateHit</code> as long as the returned lane mask indicates that the iterator is still within the volume.</p>
-      <div class="sourceCode" id="cb43"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb43-1"><a href="#cb43-1"></a><span class="dt">int</span> vklIterateHit(VKLHitIterator iterator, VKLHit *hit);</span>
-      <span id="cb43-2"><a href="#cb43-2"></a></span>
-      <span id="cb43-3"><a href="#cb43-3"></a><span class="dt">void</span> vklIterateHit4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb43-4"><a href="#cb43-4"></a>                    VKLHitIterator4 iterator,</span>
-      <span id="cb43-5"><a href="#cb43-5"></a>                    VKLHit4 *hit,</span>
-      <span id="cb43-6"><a href="#cb43-6"></a>                    <span class="dt">int</span> *result);</span>
-      <span id="cb43-7"><a href="#cb43-7"></a></span>
-      <span id="cb43-8"><a href="#cb43-8"></a><span class="dt">void</span> vklIterateHit8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb43-9"><a href="#cb43-9"></a>                    VKLHitIterator8 iterator,</span>
-      <span id="cb43-10"><a href="#cb43-10"></a>                    VKLHit8 *hit,</span>
-      <span id="cb43-11"><a href="#cb43-11"></a>                    <span class="dt">int</span> *result);</span>
-      <span id="cb43-12"><a href="#cb43-12"></a></span>
-      <span id="cb43-13"><a href="#cb43-13"></a><span class="dt">void</span> vklIterateHit16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
-      <span id="cb43-14"><a href="#cb43-14"></a>                     VKLHitIterator16 iterator,</span>
-      <span id="cb43-15"><a href="#cb43-15"></a>                     VKLHit16 *hit,</span>
-      <span id="cb43-16"><a href="#cb43-16"></a>                     <span class="dt">int</span> *result);</span></code></pre></div>
+      <div class="sourceCode" id="cb49"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb49-1"><a href="#cb49-1"></a><span class="dt">int</span> vklIterateHit(VKLHitIterator iterator, VKLHit *hit);</span>
+      <span id="cb49-2"><a href="#cb49-2"></a></span>
+      <span id="cb49-3"><a href="#cb49-3"></a><span class="dt">void</span> vklIterateHit4(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb49-4"><a href="#cb49-4"></a>                    VKLHitIterator4 iterator,</span>
+      <span id="cb49-5"><a href="#cb49-5"></a>                    VKLHit4 *hit,</span>
+      <span id="cb49-6"><a href="#cb49-6"></a>                    <span class="dt">int</span> *result);</span>
+      <span id="cb49-7"><a href="#cb49-7"></a></span>
+      <span id="cb49-8"><a href="#cb49-8"></a><span class="dt">void</span> vklIterateHit8(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb49-9"><a href="#cb49-9"></a>                    VKLHitIterator8 iterator,</span>
+      <span id="cb49-10"><a href="#cb49-10"></a>                    VKLHit8 *hit,</span>
+      <span id="cb49-11"><a href="#cb49-11"></a>                    <span class="dt">int</span> *result);</span>
+      <span id="cb49-12"><a href="#cb49-12"></a></span>
+      <span id="cb49-13"><a href="#cb49-13"></a><span class="dt">void</span> vklIterateHit16(<span class="at">const</span> <span class="dt">int</span> *valid,</span>
+      <span id="cb49-14"><a href="#cb49-14"></a>                     VKLHitIterator16 iterator,</span>
+      <span id="cb49-15"><a href="#cb49-15"></a>                     VKLHit16 *hit,</span>
+      <span id="cb49-16"><a href="#cb49-16"></a>                     <span class="dt">int</span> *result);</span></code></pre></div>
       <p>Returned hits consist of a t-value, a volume value (equal to one of the requested values specified in the value selector), and an epsilon value estimating the error in t:</p>
-      <div class="sourceCode" id="cb44"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb44-1"><a href="#cb44-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb44-2"><a href="#cb44-2"></a>{</span>
-      <span id="cb44-3"><a href="#cb44-3"></a>  <span class="dt">float</span> t;</span>
-      <span id="cb44-4"><a href="#cb44-4"></a>  <span class="dt">float</span> sample;</span>
-      <span id="cb44-5"><a href="#cb44-5"></a>  <span class="dt">float</span> epsilon;</span>
-      <span id="cb44-6"><a href="#cb44-6"></a>} VKLHit;</span>
-      <span id="cb44-7"><a href="#cb44-7"></a></span>
-      <span id="cb44-8"><a href="#cb44-8"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb44-9"><a href="#cb44-9"></a>{</span>
-      <span id="cb44-10"><a href="#cb44-10"></a>  <span class="dt">float</span> t[<span class="dv">4</span>];</span>
-      <span id="cb44-11"><a href="#cb44-11"></a>  <span class="dt">float</span> sample[<span class="dv">4</span>];</span>
-      <span id="cb44-12"><a href="#cb44-12"></a>  <span class="dt">float</span> epsilon[<span class="dv">4</span>];</span>
-      <span id="cb44-13"><a href="#cb44-13"></a>} VKLHit4;</span>
-      <span id="cb44-14"><a href="#cb44-14"></a></span>
-      <span id="cb44-15"><a href="#cb44-15"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb44-16"><a href="#cb44-16"></a>{</span>
-      <span id="cb44-17"><a href="#cb44-17"></a>  <span class="dt">float</span> t[<span class="dv">8</span>];</span>
-      <span id="cb44-18"><a href="#cb44-18"></a>  <span class="dt">float</span> sample[<span class="dv">8</span>];</span>
-      <span id="cb44-19"><a href="#cb44-19"></a>  <span class="dt">float</span> epsilon[<span class="dv">8</span>];</span>
-      <span id="cb44-20"><a href="#cb44-20"></a>} VKLHit8;</span>
-      <span id="cb44-21"><a href="#cb44-21"></a></span>
-      <span id="cb44-22"><a href="#cb44-22"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-      <span id="cb44-23"><a href="#cb44-23"></a>{</span>
-      <span id="cb44-24"><a href="#cb44-24"></a>  <span class="dt">float</span> t[<span class="dv">16</span>];</span>
-      <span id="cb44-25"><a href="#cb44-25"></a>  <span class="dt">float</span> sample[<span class="dv">16</span>];</span>
-      <span id="cb44-26"><a href="#cb44-26"></a>  <span class="dt">float</span> epsilon[<span class="dv">16</span>];</span>
-      <span id="cb44-27"><a href="#cb44-27"></a>} VKLHit16;</span></code></pre></div>
+      <div class="sourceCode" id="cb50"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb50-1"><a href="#cb50-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb50-2"><a href="#cb50-2"></a>{</span>
+      <span id="cb50-3"><a href="#cb50-3"></a>  <span class="dt">float</span> t;</span>
+      <span id="cb50-4"><a href="#cb50-4"></a>  <span class="dt">float</span> sample;</span>
+      <span id="cb50-5"><a href="#cb50-5"></a>  <span class="dt">float</span> epsilon;</span>
+      <span id="cb50-6"><a href="#cb50-6"></a>} VKLHit;</span>
+      <span id="cb50-7"><a href="#cb50-7"></a></span>
+      <span id="cb50-8"><a href="#cb50-8"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb50-9"><a href="#cb50-9"></a>{</span>
+      <span id="cb50-10"><a href="#cb50-10"></a>  <span class="dt">float</span> t[<span class="dv">4</span>];</span>
+      <span id="cb50-11"><a href="#cb50-11"></a>  <span class="dt">float</span> sample[<span class="dv">4</span>];</span>
+      <span id="cb50-12"><a href="#cb50-12"></a>  <span class="dt">float</span> epsilon[<span class="dv">4</span>];</span>
+      <span id="cb50-13"><a href="#cb50-13"></a>} VKLHit4;</span>
+      <span id="cb50-14"><a href="#cb50-14"></a></span>
+      <span id="cb50-15"><a href="#cb50-15"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb50-16"><a href="#cb50-16"></a>{</span>
+      <span id="cb50-17"><a href="#cb50-17"></a>  <span class="dt">float</span> t[<span class="dv">8</span>];</span>
+      <span id="cb50-18"><a href="#cb50-18"></a>  <span class="dt">float</span> sample[<span class="dv">8</span>];</span>
+      <span id="cb50-19"><a href="#cb50-19"></a>  <span class="dt">float</span> epsilon[<span class="dv">8</span>];</span>
+      <span id="cb50-20"><a href="#cb50-20"></a>} VKLHit8;</span>
+      <span id="cb50-21"><a href="#cb50-21"></a></span>
+      <span id="cb50-22"><a href="#cb50-22"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
+      <span id="cb50-23"><a href="#cb50-23"></a>{</span>
+      <span id="cb50-24"><a href="#cb50-24"></a>  <span class="dt">float</span> t[<span class="dv">16</span>];</span>
+      <span id="cb50-25"><a href="#cb50-25"></a>  <span class="dt">float</span> sample[<span class="dv">16</span>];</span>
+      <span id="cb50-26"><a href="#cb50-26"></a>  <span class="dt">float</span> epsilon[<span class="dv">16</span>];</span>
+      <span id="cb50-27"><a href="#cb50-27"></a>} VKLHit16;</span></code></pre></div>
       <p>For both interval and hit iterators, only the vector-wide API for the native SIMD width (determined via <code>vklGetNativeSIMDWidth</code> can be called. The scalar versions are always valid. This restriction will likely be lifted in the future.</p>
       <h1 id="performance-recommendations">Performance Recommendations</h1>
       <h2 id="mxcsr-control-and-status-register">MXCSR control and status register</h2>
       <p>It is strongly recommended to have the <code>Flush to Zero</code> and <code>Denormals are Zero</code> mode of the MXCSR control and status register enabled for each thread before calling the sampling, gradient, or interval API functions. Otherwise, under some circumstances special handling of denormalized floating point numbers can significantly reduce application and Open VKL performance. The driver parameter <code>flushDenormals</code> or environment variable <code>OPENVKL_FLUSH_DENORMALS</code> can be used to toggle this mode; by default it is enabled. Alternatively, when using Open VKL together with the Intel® Threading Building Blocks, it is sufficient to execute the following code at the beginning of the application main thread (before the creation of the <code>tbb::task_scheduler_init</code> object):</p>
-      <div class="sourceCode" id="cb45"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb45-1"><a href="#cb45-1"></a><span class="pp">#include </span><span class="im">&lt;xmmintrin.h&gt;</span></span>
-      <span id="cb45-2"><a href="#cb45-2"></a><span class="pp">#include </span><span class="im">&lt;pmmintrin.h&gt;</span></span>
-      <span id="cb45-3"><a href="#cb45-3"></a>...</span>
-      <span id="cb45-4"><a href="#cb45-4"></a>_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);</span>
-      <span id="cb45-5"><a href="#cb45-5"></a>_MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);</span></code></pre></div>
+      <div class="sourceCode" id="cb51"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb51-1"><a href="#cb51-1"></a><span class="pp">#include </span><span class="im">&lt;xmmintrin.h&gt;</span></span>
+      <span id="cb51-2"><a href="#cb51-2"></a><span class="pp">#include </span><span class="im">&lt;pmmintrin.h&gt;</span></span>
+      <span id="cb51-3"><a href="#cb51-3"></a>...</span>
+      <span id="cb51-4"><a href="#cb51-4"></a>_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);</span>
+      <span id="cb51-5"><a href="#cb51-5"></a>_MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);</span></code></pre></div>
       <p>If using a different tasking system, make sure each thread calling into Open VKL has the proper mode set.</p>
       <h2 id="iterator-allocation">Iterator Allocation</h2>
       <p><code>vklInitIntervalIterator</code> and <code>vklInitHitIterator</code> expect a user allocated buffer. While this buffer can be allocated by any means, we expect iterators to be used in inner loops and advise against heap allocation in that case. Applications may provide high performance memory pools, but as a preferred alternative we recommend stack allocated buffers.</p>
       <p>In C99, variable length arrays provide an easy way to achieve this:</p>
-      <div class="sourceCode" id="cb46"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb46-1"><a href="#cb46-1"></a><span class="at">const</span> <span class="dt">size_t</span> bufferSize = vklGetIntervalIteratorSize(volume);</span>
-      <span id="cb46-2"><a href="#cb46-2"></a><span class="dt">char</span> buffer[bufferSize];</span></code></pre></div>
-      <p>Note that the call to <code>vklGetIntervalIteratorSize</code> or <code>vklGetHitIteratorSize</code> should not appear in an inner loop as it is relatively costly. The return value depends only on the volume type and target architecture, and <code>volume</code> does not actually have to be committed.</p>
+      <div class="sourceCode" id="cb52"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb52-1"><a href="#cb52-1"></a><span class="at">const</span> <span class="dt">size_t</span> bufferSize = vklGetIntervalIteratorSize(sampler);</span>
+      <span id="cb52-2"><a href="#cb52-2"></a><span class="dt">char</span> buffer[bufferSize];</span></code></pre></div>
+      <p>Note that the call to <code>vklGetIntervalIteratorSize</code> or <code>vklGetHitIteratorSize</code> should not appear in an inner loop as it is relatively costly. The return value depends on the volume type, target architecture, and parameters to <code>sampler</code>.</p>
       <p>In C++, variable length arrays are not part of the standard. Here, users may rely on <code>alloca</code> and similar functions:</p>
-      <div class="sourceCode" id="cb47"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb47-1"><a href="#cb47-1"></a><span class="pp">#include </span><span class="im">&lt;alloca.h&gt;</span></span>
-      <span id="cb47-2"><a href="#cb47-2"></a><span class="at">const</span> <span class="dt">size_t</span> bufferSize = vklGetIntervalIteratorSize(volume);</span>
-      <span id="cb47-3"><a href="#cb47-3"></a><span class="dt">char</span> *buffer = alloca(bufferSize);</span></code></pre></div>
+      <div class="sourceCode" id="cb53"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb53-1"><a href="#cb53-1"></a><span class="pp">#include </span><span class="im">&lt;alloca.h&gt;</span></span>
+      <span id="cb53-2"><a href="#cb53-2"></a><span class="at">const</span> <span class="dt">size_t</span> bufferSize = vklGetIntervalIteratorSize(sampler);</span>
+      <span id="cb53-3"><a href="#cb53-3"></a><span class="dt">char</span> *buffer = alloca(bufferSize);</span></code></pre></div>
       <p>Users should understand the implications of <code>alloca</code>. In particular, <code>alloca</code> does check available stack space and may result in stack overflow. <code>buffer</code> also becomes invalid at the end of the scope. As one consequence, it cannot be returned from a function. On Windows, <code>_malloca</code> is a safer option that performs additional error checking.</p>
       <p>In ISPC, variable length or <code>alloca</code> do not exist. Applications may instead rely on the <code>VKL_MAX_INTERVAL_ITERATOR_SIZE</code> and <code>VKL_MAX_HIT_ITERATOR_SIZE</code> macros:</p>
-      <div class="sourceCode" id="cb48"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb48-1"><a href="#cb48-1"></a>uniform <span class="dt">unsigned</span> int8 buffer[VKL_MAX_INTERVAL_ITERATOR_SIZE];</span></code></pre></div>
+      <div class="sourceCode" id="cb54"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb54-1"><a href="#cb54-1"></a>uniform <span class="dt">unsigned</span> int8 buffer[VKL_MAX_INTERVAL_ITERATOR_SIZE];</span></code></pre></div>
       <p>These values are majorants over all drivers and volume types. Note that Open VKL attempts to detect the target SIMD width using <code>TARGET_WIDTH</code>, returning smaller buffer sizes for narrow architectures. However, Open VKL may fall back to the largest buffer size over all targets.</p>
+      <h2 id="multi-attribute-volume-data-layout">Multi-attribute Volume Data Layout</h2>
+      <p>Open VKL provides flexible managed data APIs that allow applications to specify input data in various formats and layouts. When shared buffers are used (<code>dataCreationFlags = VKL_DATA_SHARED_BUFFER</code>), Open VKL will use the application-owned memory directly, respecting the input data layout. Shared buffers therefore allow applications to strategically select the best layout for multi-attribute volume data and expected sampling behavior.</p>
+      <p>For volume attributes that are sampled individually (e.g. using <code>vklComputeSample[4,8,16,N]()</code>), it is recommended to use a structure-of-arrays layout. That is, each attribute’s data should be compact in contiguous memory. This can be accomplished by simply using Open VKL owned data objects (<code>dataCreationFlags = VKL_DATA_DEFAULT</code>), or by using a natural <code>byteStride</code> for shared buffers.</p>
+      <p>For volume attributes that are sampled simultaneously (e.g. using <code>vklComputeSampleM[4,8,16,N]()</code>), it is recommended to use an array-of-structures layout. That is, data for these attributes should be provided per voxel in a contiguous layout. This is accomplished using shared buffers for each attribute with appropriate byte strides. For example, for a three attribute structured volume representing a velocity field, the data can be provided as:</p>
+      <div class="sourceCode" id="cb55"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb55-1"><a href="#cb55-1"></a><span class="co">// used in Open VKL shared buffers, so must not be freed by application</span></span>
+      <span id="cb55-2"><a href="#cb55-2"></a><span class="bu">std::</span>vector&lt;vkl_vec3f&gt; velocities(numVoxels);</span>
+      <span id="cb55-3"><a href="#cb55-3"></a></span>
+      <span id="cb55-4"><a href="#cb55-4"></a><span class="cf">for</span> (<span class="kw">auto</span> &amp;v : velocities) {</span>
+      <span id="cb55-5"><a href="#cb55-5"></a>  v.x = ...;</span>
+      <span id="cb55-6"><a href="#cb55-6"></a>  v.y = ...;</span>
+      <span id="cb55-7"><a href="#cb55-7"></a>  v.z = ...;</span>
+      <span id="cb55-8"><a href="#cb55-8"></a>}</span>
+      <span id="cb55-9"><a href="#cb55-9"></a></span>
+      <span id="cb55-10"><a href="#cb55-10"></a><span class="bu">std::</span>vector&lt;VKLData&gt; attributes;</span>
+      <span id="cb55-11"><a href="#cb55-11"></a></span>
+      <span id="cb55-12"><a href="#cb55-12"></a>attributes.push_back(vklNewData(velocities.size(),</span>
+      <span id="cb55-13"><a href="#cb55-13"></a>                                VKL_FLOAT,</span>
+      <span id="cb55-14"><a href="#cb55-14"></a>                                &amp;velocities[<span class="dv">0</span>].x,</span>
+      <span id="cb55-15"><a href="#cb55-15"></a>                                VKL_DATA_SHARED_BUFFER,</span>
+      <span id="cb55-16"><a href="#cb55-16"></a>                                <span class="kw">sizeof</span>(vkl_vec3f)));</span>
+      <span id="cb55-17"><a href="#cb55-17"></a></span>
+      <span id="cb55-18"><a href="#cb55-18"></a>attributes.push_back(vklNewData(velocities.size(),</span>
+      <span id="cb55-19"><a href="#cb55-19"></a>                                VKL_FLOAT,</span>
+      <span id="cb55-20"><a href="#cb55-20"></a>                                &amp;velocities[<span class="dv">0</span>].y,</span>
+      <span id="cb55-21"><a href="#cb55-21"></a>                                VKL_DATA_SHARED_BUFFER,</span>
+      <span id="cb55-22"><a href="#cb55-22"></a>                                <span class="kw">sizeof</span>(vkl_vec3f)));</span>
+      <span id="cb55-23"><a href="#cb55-23"></a></span>
+      <span id="cb55-24"><a href="#cb55-24"></a>attributes.push_back(vklNewData(velocities.size(),</span>
+      <span id="cb55-25"><a href="#cb55-25"></a>                                VKL_FLOAT,</span>
+      <span id="cb55-26"><a href="#cb55-26"></a>                                &amp;velocities[<span class="dv">0</span>].z,</span>
+      <span id="cb55-27"><a href="#cb55-27"></a>                                VKL_DATA_SHARED_BUFFER,</span>
+      <span id="cb55-28"><a href="#cb55-28"></a>                                <span class="kw">sizeof</span>(vkl_vec3f)));</span>
+      <span id="cb55-29"><a href="#cb55-29"></a></span>
+      <span id="cb55-30"><a href="#cb55-30"></a>VKLData attributesData =</span>
+      <span id="cb55-31"><a href="#cb55-31"></a>    vklNewData(attributes.size(), VKL_DATA, attributes.data());</span>
+      <span id="cb55-32"><a href="#cb55-32"></a></span>
+      <span id="cb55-33"><a href="#cb55-33"></a><span class="cf">for</span> (<span class="kw">auto</span> &amp;attribute : attributes)</span>
+      <span id="cb55-34"><a href="#cb55-34"></a>  vklRelease(attribute);</span>
+      <span id="cb55-35"><a href="#cb55-35"></a></span>
+      <span id="cb55-36"><a href="#cb55-36"></a>VKLVolume volume = vklNewVolume(<span class="st">&quot;structuredRegular&quot;</span>);</span>
+      <span id="cb55-37"><a href="#cb55-37"></a></span>
+      <span id="cb55-38"><a href="#cb55-38"></a>vklSetData(volume, <span class="st">&quot;data&quot;</span>, attributesData);</span>
+      <span id="cb55-39"><a href="#cb55-39"></a>vklRelease(attributesData);</span>
+      <span id="cb55-40"><a href="#cb55-40"></a></span>
+      <span id="cb55-41"><a href="#cb55-41"></a><span class="co">// set other volume parameters...</span></span>
+      <span id="cb55-42"><a href="#cb55-42"></a></span>
+      <span id="cb55-43"><a href="#cb55-43"></a>vklCommit(volume);</span></code></pre></div>
+      <p>These are general recommendations for common scenarios; it is still recommended to evaluate performance of different volume data layouts for your application’s particular use case.</p>
 
     </div>
   </div>
