@@ -208,6 +208,10 @@
       <p>Open VKL provides a C API, and also supports applications written with the Intel® SPMD Program Compiler (ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-0.12.1">Open VKL 0.12.1</h3>
+      <ul>
+      <li>Fixed bug in VDB volume interval iterator implementation which could lead to missed intervals or incorrect value ranges in returned intervals</li>
+      </ul>
       <h3 id="open-vkl-0.12.0">Open VKL 0.12.0</h3>
       <ul>
       <li>Added support for temporally varying volumes with associated API changes for sampling, gradients, and hit iteration. This feature can be used to enable motion blurred rendering</li>
