@@ -205,9 +205,58 @@
       <hr>
       <h1 id="overview">Overview</h1>
       <p>Intel® Open Volume Kernel Library (Intel® Open VKL) is a collection of high-performance volume computation kernels, developed at Intel. The target users of Open VKL are graphics application engineers who want to improve the performance of their volume rendering applications by leveraging Open VKL’s performance-optimized kernels, which include volume traversal and sampling functionality for a variety of volumetric data formats. The kernels are optimized for the latest Intel® processors with support for SSE, AVX, AVX2, and AVX-512 instructions. Open VKL is part of the <a href="https://software.intel.com/en-us/rendering-framework">Intel® oneAPI Rendering Toolkit</a> and is released under the permissive <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
-      <p>Open VKL provides a C API, and also supports applications written with the Intel® SPMD Program Compiler (ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
+      <p>Open VKL provides a C API, and also supports applications written with the Intel® Implicit SPMD Program Compiler (Intel® ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-0.13.0">Open VKL 0.13.0</h3>
+      <ul>
+      <li>Driver (now device) API changes:
+      <ul>
+      <li>Renamed <code>VKLDriver</code> to <code>VKLDevice</code> and updated associated device setup APIs</li>
+      <li>Use of multiple concurrent devices is now supported; therefore <code>vklNewVolume()</code> and <code>vklNewData()</code> now require a device handle</li>
+      <li>Renamed the <code>ispc_device</code> module and <code>ispc</code> device to <code>cpu_device</code> and <code>cpu</code>, respectively</li>
+      <li>The <code>OPENVKL_CPU_DEVICE_DEFAULT_WIDTH</code> environment variable can now be used to change the <code>cpu</code> device’s default SIMD width at run time</li>
+      </ul></li>
+      <li>Added new <code>VKLTemporalFormat</code> enum used for temporally varying volume parameterization</li>
+      <li>VDB volumes:
+      <ul>
+      <li>Support for temporally structured and temporally unstructured (TUV) attribute data, which can be used for motion blurred rendering</li>
+      <li>Supporting tricubic filtering via <code>VKL_FILTER_TRICUBIC</code> filter type</li>
+      <li>Added support for half precision float-point (FP16) attribute data via <code>VKL_HALF</code> data type</li>
+      <li>Added a new <code>InnerNode</code> observer and associated utility functions which allows applications to introspect inner nodes of the internal tree structure, including bounding boxes and value ranges</li>
+      <li>Renamed <code>VKL_FORMAT_CONSTANT_ZYX</code> to <code>VKL_FORMAT_DENSE_ZYX</code></li>
+      </ul></li>
+      <li>Structured regular and spherical volumes:
+      <ul>
+      <li>Added support for half precision float-point (FP16) attribute data via <code>VKL_HALF</code> data type</li>
+      </ul></li>
+      <li>Unstructured volumes:
+      <ul>
+      <li>Added support for elementary cell iteration via the <code>elementaryCellIteration</code> parameter</li>
+      <li>Robustness improvements for hit iteration</li>
+      </ul></li>
+      <li>AMR volumes:
+      <ul>
+      <li>Improved interval iterator implementation, resolving issues with returned interval <code>nominalDeltaT</code> values</li>
+      <li>Interval iterators now support <code>maxIteratorDepth</code> parameter</li>
+      </ul></li>
+      <li>Interval and hit iteration performance improvements when multiple values ranges / values are selected</li>
+      <li>Added new temporal compression utilities which applications can use for processing temporally unstructured attribute data</li>
+      <li>vklExamples additions demonstrating:
+      <ul>
+      <li>Motion blurred rendering on temporally structured and temporally unstructured <code>vdb</code> volumes</li>
+      <li>Tricubic filtering on <code>vdb</code> volumes</li>
+      <li>Half-precision floating-point (FP16) support for <code>structuredRegular</code>, <code>structuredSpherical</code>, and <code>vdb</code> volumes</li>
+      <li>Elementary cell interval iteration on <code>unstructured</code> volumes</li>
+      <li>Use of the <code>InnerNode</code> observer on <code>vdb</code> volumes</li>
+      </ul></li>
+      <li>Superbuild updates to:
+      <ul>
+      <li>Embree 3.13.0</li>
+      <li>rkcommon 1.6.1</li>
+      </ul></li>
+      <li>Minimum rkcommon version is now 1.6.1</li>
+      </ul>
       <h3 id="open-vkl-0.12.1">Open VKL 0.12.1</h3>
       <ul>
       <li>Fixed bug in VDB volume interval iterator implementation which could lead to missed intervals or incorrect value ranges in returned intervals</li>

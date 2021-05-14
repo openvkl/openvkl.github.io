@@ -346,7 +346,7 @@
       <span id="cb1-229"><a href="#cb1-229"></a>  <span class="co">// sample, gradient (first attribute)</span></span>
       <span id="cb1-230"><a href="#cb1-230"></a>  printf(<span class="st">&quot;</span><span class="sc">\n\t</span><span class="st">sampling and gradient computation (first attribute)</span><span class="sc">\n</span><span class="st">&quot;</span>);</span>
       <span id="cb1-231"><a href="#cb1-231"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> attributeIndex = <span class="dv">0</span>;</span>
-      <span id="cb1-232"><a href="#cb1-232"></a>  <span class="dt">float</span> time [<span class="dv">5</span>]              = {<span class="fl">0.</span><span class="bu">f</span>};</span>
+      <span id="cb1-232"><a href="#cb1-232"></a>  <span class="dt">float</span> time[<span class="dv">5</span>]               = {<span class="fl">0.</span><span class="bu">f</span>};</span>
       <span id="cb1-233"><a href="#cb1-233"></a>  <span class="dt">float</span> sample[<span class="dv">5</span>];</span>
       <span id="cb1-234"><a href="#cb1-234"></a>  vkl_vec3f grad[<span class="dv">5</span>];</span>
       <span id="cb1-235"><a href="#cb1-235"></a>  vklComputeSampleN(sampler, <span class="dv">5</span>, coord, sample, attributeIndex, time);</span>
@@ -381,39 +381,39 @@
       <span id="cb1-264"><a href="#cb1-264"></a></span>
       <span id="cb1-265"><a href="#cb1-265"></a><span class="dt">int</span> main()</span>
       <span id="cb1-266"><a href="#cb1-266"></a>{</span>
-      <span id="cb1-267"><a href="#cb1-267"></a>  vklLoadModule(<span class="st">&quot;ispc_driver&quot;</span>);</span>
+      <span id="cb1-267"><a href="#cb1-267"></a>  vklLoadModule(<span class="st">&quot;cpu_device&quot;</span>);</span>
       <span id="cb1-268"><a href="#cb1-268"></a></span>
-      <span id="cb1-269"><a href="#cb1-269"></a>  VKLDriver driver = vklNewDriver(<span class="st">&quot;ispc&quot;</span>);</span>
-      <span id="cb1-270"><a href="#cb1-270"></a>  vklCommitDriver(driver);</span>
-      <span id="cb1-271"><a href="#cb1-271"></a>  vklSetCurrentDriver(driver);</span>
-      <span id="cb1-272"><a href="#cb1-272"></a></span>
-      <span id="cb1-273"><a href="#cb1-273"></a>  <span class="at">const</span> <span class="dt">int</span> dimensions[] = {<span class="dv">128</span>, <span class="dv">128</span>, <span class="dv">128</span>};</span>
-      <span id="cb1-274"><a href="#cb1-274"></a></span>
-      <span id="cb1-275"><a href="#cb1-275"></a>  <span class="at">const</span> <span class="dt">int</span> numVoxels = dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] * dimensions[<span class="dv">2</span>];</span>
-      <span id="cb1-276"><a href="#cb1-276"></a></span>
-      <span id="cb1-277"><a href="#cb1-277"></a>  <span class="at">const</span> <span class="dt">int</span> numAttributes = <span class="dv">3</span>;</span>
-      <span id="cb1-278"><a href="#cb1-278"></a></span>
-      <span id="cb1-279"><a href="#cb1-279"></a>  VKLVolume volume = vklNewVolume(<span class="st">&quot;structuredRegular&quot;</span>);</span>
-      <span id="cb1-280"><a href="#cb1-280"></a>  vklSetVec3i(</span>
-      <span id="cb1-281"><a href="#cb1-281"></a>      volume, <span class="st">&quot;dimensions&quot;</span>, dimensions[<span class="dv">0</span>], dimensions[<span class="dv">1</span>], dimensions[<span class="dv">2</span>]);</span>
-      <span id="cb1-282"><a href="#cb1-282"></a>  vklSetVec3f(volume, <span class="st">&quot;gridOrigin&quot;</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
-      <span id="cb1-283"><a href="#cb1-283"></a>  vklSetVec3f(volume, <span class="st">&quot;gridSpacing&quot;</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>);</span>
-      <span id="cb1-284"><a href="#cb1-284"></a></span>
-      <span id="cb1-285"><a href="#cb1-285"></a>  <span class="dt">float</span> *voxels = malloc(numVoxels * <span class="kw">sizeof</span>(<span class="dt">float</span>));</span>
-      <span id="cb1-286"><a href="#cb1-286"></a></span>
-      <span id="cb1-287"><a href="#cb1-287"></a>  <span class="cf">if</span> (!voxels) {</span>
-      <span id="cb1-288"><a href="#cb1-288"></a>    printf(<span class="st">&quot;failed to allocate voxel memory!</span><span class="sc">\n</span><span class="st">&quot;</span>);</span>
-      <span id="cb1-289"><a href="#cb1-289"></a>    <span class="cf">return</span> <span class="dv">1</span>;</span>
-      <span id="cb1-290"><a href="#cb1-290"></a>  }</span>
-      <span id="cb1-291"><a href="#cb1-291"></a></span>
-      <span id="cb1-292"><a href="#cb1-292"></a>  <span class="co">// volume attribute 0: x-grad</span></span>
-      <span id="cb1-293"><a href="#cb1-293"></a>  <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">0</span>; k &lt; dimensions[<span class="dv">2</span>]; k++)</span>
-      <span id="cb1-294"><a href="#cb1-294"></a>    <span class="cf">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; dimensions[<span class="dv">1</span>]; j++)</span>
-      <span id="cb1-295"><a href="#cb1-295"></a>      <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; dimensions[<span class="dv">0</span>]; i++)</span>
-      <span id="cb1-296"><a href="#cb1-296"></a>        voxels[k * dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] + j * dimensions[<span class="dv">2</span>] + i] =</span>
-      <span id="cb1-297"><a href="#cb1-297"></a>            (<span class="dt">float</span>)i;</span>
-      <span id="cb1-298"><a href="#cb1-298"></a></span>
-      <span id="cb1-299"><a href="#cb1-299"></a>  VKLData data0 = vklNewData(numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
+      <span id="cb1-269"><a href="#cb1-269"></a>  VKLDevice device = vklNewDevice(<span class="st">&quot;cpu&quot;</span>);</span>
+      <span id="cb1-270"><a href="#cb1-270"></a>  vklCommitDevice(device);</span>
+      <span id="cb1-271"><a href="#cb1-271"></a></span>
+      <span id="cb1-272"><a href="#cb1-272"></a>  <span class="at">const</span> <span class="dt">int</span> dimensions[] = {<span class="dv">128</span>, <span class="dv">128</span>, <span class="dv">128</span>};</span>
+      <span id="cb1-273"><a href="#cb1-273"></a></span>
+      <span id="cb1-274"><a href="#cb1-274"></a>  <span class="at">const</span> <span class="dt">int</span> numVoxels = dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] * dimensions[<span class="dv">2</span>];</span>
+      <span id="cb1-275"><a href="#cb1-275"></a></span>
+      <span id="cb1-276"><a href="#cb1-276"></a>  <span class="at">const</span> <span class="dt">int</span> numAttributes = <span class="dv">3</span>;</span>
+      <span id="cb1-277"><a href="#cb1-277"></a></span>
+      <span id="cb1-278"><a href="#cb1-278"></a>  VKLVolume volume = vklNewVolume(device, <span class="st">&quot;structuredRegular&quot;</span>);</span>
+      <span id="cb1-279"><a href="#cb1-279"></a>  vklSetVec3i(</span>
+      <span id="cb1-280"><a href="#cb1-280"></a>      volume, <span class="st">&quot;dimensions&quot;</span>, dimensions[<span class="dv">0</span>], dimensions[<span class="dv">1</span>], dimensions[<span class="dv">2</span>]);</span>
+      <span id="cb1-281"><a href="#cb1-281"></a>  vklSetVec3f(volume, <span class="st">&quot;gridOrigin&quot;</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
+      <span id="cb1-282"><a href="#cb1-282"></a>  vklSetVec3f(volume, <span class="st">&quot;gridSpacing&quot;</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>);</span>
+      <span id="cb1-283"><a href="#cb1-283"></a></span>
+      <span id="cb1-284"><a href="#cb1-284"></a>  <span class="dt">float</span> *voxels = malloc(numVoxels * <span class="kw">sizeof</span>(<span class="dt">float</span>));</span>
+      <span id="cb1-285"><a href="#cb1-285"></a></span>
+      <span id="cb1-286"><a href="#cb1-286"></a>  <span class="cf">if</span> (!voxels) {</span>
+      <span id="cb1-287"><a href="#cb1-287"></a>    printf(<span class="st">&quot;failed to allocate voxel memory!</span><span class="sc">\n</span><span class="st">&quot;</span>);</span>
+      <span id="cb1-288"><a href="#cb1-288"></a>    <span class="cf">return</span> <span class="dv">1</span>;</span>
+      <span id="cb1-289"><a href="#cb1-289"></a>  }</span>
+      <span id="cb1-290"><a href="#cb1-290"></a></span>
+      <span id="cb1-291"><a href="#cb1-291"></a>  <span class="co">// volume attribute 0: x-grad</span></span>
+      <span id="cb1-292"><a href="#cb1-292"></a>  <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">0</span>; k &lt; dimensions[<span class="dv">2</span>]; k++)</span>
+      <span id="cb1-293"><a href="#cb1-293"></a>    <span class="cf">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; dimensions[<span class="dv">1</span>]; j++)</span>
+      <span id="cb1-294"><a href="#cb1-294"></a>      <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; dimensions[<span class="dv">0</span>]; i++)</span>
+      <span id="cb1-295"><a href="#cb1-295"></a>        voxels[k * dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] + j * dimensions[<span class="dv">2</span>] + i] =</span>
+      <span id="cb1-296"><a href="#cb1-296"></a>            (<span class="dt">float</span>)i;</span>
+      <span id="cb1-297"><a href="#cb1-297"></a></span>
+      <span id="cb1-298"><a href="#cb1-298"></a>  VKLData data0 =</span>
+      <span id="cb1-299"><a href="#cb1-299"></a>      vklNewData(device, numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
       <span id="cb1-300"><a href="#cb1-300"></a></span>
       <span id="cb1-301"><a href="#cb1-301"></a>  <span class="co">// volume attribute 1: y-grad</span></span>
       <span id="cb1-302"><a href="#cb1-302"></a>  <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">0</span>; k &lt; dimensions[<span class="dv">2</span>]; k++)</span>
@@ -422,51 +422,53 @@
       <span id="cb1-305"><a href="#cb1-305"></a>        voxels[k * dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] + j * dimensions[<span class="dv">2</span>] + i] =</span>
       <span id="cb1-306"><a href="#cb1-306"></a>            (<span class="dt">float</span>)j;</span>
       <span id="cb1-307"><a href="#cb1-307"></a></span>
-      <span id="cb1-308"><a href="#cb1-308"></a>  VKLData data1 = vklNewData(numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
-      <span id="cb1-309"><a href="#cb1-309"></a></span>
-      <span id="cb1-310"><a href="#cb1-310"></a>  <span class="co">// volume attribute 2: z-grad</span></span>
-      <span id="cb1-311"><a href="#cb1-311"></a>  <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">0</span>; k &lt; dimensions[<span class="dv">2</span>]; k++)</span>
-      <span id="cb1-312"><a href="#cb1-312"></a>    <span class="cf">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; dimensions[<span class="dv">1</span>]; j++)</span>
-      <span id="cb1-313"><a href="#cb1-313"></a>      <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; dimensions[<span class="dv">0</span>]; i++)</span>
-      <span id="cb1-314"><a href="#cb1-314"></a>        voxels[k * dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] + j * dimensions[<span class="dv">2</span>] + i] =</span>
-      <span id="cb1-315"><a href="#cb1-315"></a>            (<span class="dt">float</span>)k;</span>
-      <span id="cb1-316"><a href="#cb1-316"></a></span>
-      <span id="cb1-317"><a href="#cb1-317"></a>  VKLData data2 = vklNewData(numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
-      <span id="cb1-318"><a href="#cb1-318"></a></span>
-      <span id="cb1-319"><a href="#cb1-319"></a>  VKLData attributes[] = {data0, data1, data2};</span>
+      <span id="cb1-308"><a href="#cb1-308"></a>  VKLData data1 =</span>
+      <span id="cb1-309"><a href="#cb1-309"></a>      vklNewData(device, numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
+      <span id="cb1-310"><a href="#cb1-310"></a></span>
+      <span id="cb1-311"><a href="#cb1-311"></a>  <span class="co">// volume attribute 2: z-grad</span></span>
+      <span id="cb1-312"><a href="#cb1-312"></a>  <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">0</span>; k &lt; dimensions[<span class="dv">2</span>]; k++)</span>
+      <span id="cb1-313"><a href="#cb1-313"></a>    <span class="cf">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; dimensions[<span class="dv">1</span>]; j++)</span>
+      <span id="cb1-314"><a href="#cb1-314"></a>      <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; dimensions[<span class="dv">0</span>]; i++)</span>
+      <span id="cb1-315"><a href="#cb1-315"></a>        voxels[k * dimensions[<span class="dv">0</span>] * dimensions[<span class="dv">1</span>] + j * dimensions[<span class="dv">2</span>] + i] =</span>
+      <span id="cb1-316"><a href="#cb1-316"></a>            (<span class="dt">float</span>)k;</span>
+      <span id="cb1-317"><a href="#cb1-317"></a></span>
+      <span id="cb1-318"><a href="#cb1-318"></a>  VKLData data2 =</span>
+      <span id="cb1-319"><a href="#cb1-319"></a>      vklNewData(device, numVoxels, VKL_FLOAT, voxels, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
       <span id="cb1-320"><a href="#cb1-320"></a></span>
-      <span id="cb1-321"><a href="#cb1-321"></a>  VKLData attributesData =</span>
-      <span id="cb1-322"><a href="#cb1-322"></a>      vklNewData(numAttributes, VKL_DATA, attributes, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
-      <span id="cb1-323"><a href="#cb1-323"></a></span>
-      <span id="cb1-324"><a href="#cb1-324"></a>  vklRelease(data0);</span>
-      <span id="cb1-325"><a href="#cb1-325"></a>  vklRelease(data1);</span>
-      <span id="cb1-326"><a href="#cb1-326"></a>  vklRelease(data2);</span>
-      <span id="cb1-327"><a href="#cb1-327"></a></span>
-      <span id="cb1-328"><a href="#cb1-328"></a>  vklSetData(volume, <span class="st">&quot;data&quot;</span>, attributesData);</span>
-      <span id="cb1-329"><a href="#cb1-329"></a>  vklRelease(attributesData);</span>
-      <span id="cb1-330"><a href="#cb1-330"></a></span>
-      <span id="cb1-331"><a href="#cb1-331"></a>  vklCommit(volume);</span>
+      <span id="cb1-321"><a href="#cb1-321"></a>  VKLData attributes[] = {data0, data1, data2};</span>
+      <span id="cb1-322"><a href="#cb1-322"></a></span>
+      <span id="cb1-323"><a href="#cb1-323"></a>  VKLData attributesData = vklNewData(</span>
+      <span id="cb1-324"><a href="#cb1-324"></a>      device, numAttributes, VKL_DATA, attributes, VKL_DATA_DEFAULT, <span class="dv">0</span>);</span>
+      <span id="cb1-325"><a href="#cb1-325"></a></span>
+      <span id="cb1-326"><a href="#cb1-326"></a>  vklRelease(data0);</span>
+      <span id="cb1-327"><a href="#cb1-327"></a>  vklRelease(data1);</span>
+      <span id="cb1-328"><a href="#cb1-328"></a>  vklRelease(data2);</span>
+      <span id="cb1-329"><a href="#cb1-329"></a></span>
+      <span id="cb1-330"><a href="#cb1-330"></a>  vklSetData(volume, <span class="st">&quot;data&quot;</span>, attributesData);</span>
+      <span id="cb1-331"><a href="#cb1-331"></a>  vklRelease(attributesData);</span>
       <span id="cb1-332"><a href="#cb1-332"></a></span>
-      <span id="cb1-333"><a href="#cb1-333"></a>  demoScalarAPI(volume);</span>
-      <span id="cb1-334"><a href="#cb1-334"></a>  demoVectorAPI(volume);</span>
-      <span id="cb1-335"><a href="#cb1-335"></a>  demoStreamAPI(volume);</span>
-      <span id="cb1-336"><a href="#cb1-336"></a></span>
-      <span id="cb1-337"><a href="#cb1-337"></a>  vklRelease(volume);</span>
+      <span id="cb1-333"><a href="#cb1-333"></a>  vklCommit(volume);</span>
+      <span id="cb1-334"><a href="#cb1-334"></a></span>
+      <span id="cb1-335"><a href="#cb1-335"></a>  demoScalarAPI(volume);</span>
+      <span id="cb1-336"><a href="#cb1-336"></a>  demoVectorAPI(volume);</span>
+      <span id="cb1-337"><a href="#cb1-337"></a>  demoStreamAPI(volume);</span>
       <span id="cb1-338"><a href="#cb1-338"></a></span>
-      <span id="cb1-339"><a href="#cb1-339"></a>  vklShutdown();</span>
+      <span id="cb1-339"><a href="#cb1-339"></a>  vklRelease(volume);</span>
       <span id="cb1-340"><a href="#cb1-340"></a></span>
-      <span id="cb1-341"><a href="#cb1-341"></a>  free(voxels);</span>
+      <span id="cb1-341"><a href="#cb1-341"></a>  vklReleaseDevice(device);</span>
       <span id="cb1-342"><a href="#cb1-342"></a></span>
-      <span id="cb1-343"><a href="#cb1-343"></a>  printf(<span class="st">&quot;complete.</span><span class="sc">\n</span><span class="st">&quot;</span>);</span>
+      <span id="cb1-343"><a href="#cb1-343"></a>  free(voxels);</span>
       <span id="cb1-344"><a href="#cb1-344"></a></span>
-      <span id="cb1-345"><a href="#cb1-345"></a><span class="pp">#if defined(_MSC_VER)</span></span>
-      <span id="cb1-346"><a href="#cb1-346"></a>  <span class="co">// On Windows, sleep for a few seconds so the terminal window doesn&#39;t close</span></span>
-      <span id="cb1-347"><a href="#cb1-347"></a>  <span class="co">// immediately.</span></span>
-      <span id="cb1-348"><a href="#cb1-348"></a>  Sleep(<span class="dv">3000</span>);</span>
-      <span id="cb1-349"><a href="#cb1-349"></a><span class="pp">#endif</span></span>
-      <span id="cb1-350"><a href="#cb1-350"></a></span>
-      <span id="cb1-351"><a href="#cb1-351"></a>  <span class="cf">return</span> <span class="dv">0</span>;</span>
-      <span id="cb1-352"><a href="#cb1-352"></a>}</span></code></pre></div>
+      <span id="cb1-345"><a href="#cb1-345"></a>  printf(<span class="st">&quot;complete.</span><span class="sc">\n</span><span class="st">&quot;</span>);</span>
+      <span id="cb1-346"><a href="#cb1-346"></a></span>
+      <span id="cb1-347"><a href="#cb1-347"></a><span class="pp">#if defined(_MSC_VER)</span></span>
+      <span id="cb1-348"><a href="#cb1-348"></a>  <span class="co">// On Windows, sleep for a few seconds so the terminal window doesn&#39;t close</span></span>
+      <span id="cb1-349"><a href="#cb1-349"></a>  <span class="co">// immediately.</span></span>
+      <span id="cb1-350"><a href="#cb1-350"></a>  Sleep(<span class="dv">3000</span>);</span>
+      <span id="cb1-351"><a href="#cb1-351"></a><span class="pp">#endif</span></span>
+      <span id="cb1-352"><a href="#cb1-352"></a></span>
+      <span id="cb1-353"><a href="#cb1-353"></a>  <span class="cf">return</span> <span class="dv">0</span>;</span>
+      <span id="cb1-354"><a href="#cb1-354"></a>}</span></code></pre></div>
 
     </div>
   </div>
