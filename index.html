@@ -204,10 +204,50 @@
       </div>
       <hr>
       <h1 id="overview">Overview</h1>
-      <p>Intel® Open Volume Kernel Library (Intel® Open VKL) is a collection of high-performance volume computation kernels, developed at Intel. The target users of Open VKL are graphics application engineers who want to improve the performance of their volume rendering applications by leveraging Open VKL’s performance-optimized kernels, which include volume traversal and sampling functionality for a variety of volumetric data formats. The kernels are optimized for the latest Intel® processors with support for SSE, AVX, AVX2, and AVX-512 instructions. Open VKL is part of the <a href="https://software.intel.com/en-us/rendering-framework">Intel® oneAPI Rendering Toolkit</a> and is released under the permissive <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
-      <p>Open VKL provides a C API, and also supports applications written with the Intel® Implicit SPMD Program Compiler (Intel® ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, and AVX-512 instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
+      <p>Intel® Open Volume Kernel Library (Intel® Open VKL) is a collection of high-performance volume computation kernels, developed at Intel. The target users of Open VKL are graphics application engineers who want to improve the performance of their volume rendering applications by leveraging Open VKL’s performance-optimized kernels, which include volume traversal and sampling functionality for a variety of volumetric data formats. The kernels are optimized for the latest Intel® processors with support for SSE, AVX, AVX2, and AVX-512 instructions, and for ARM processors with support for NEON instructions. Open VKL is part of the <a href="https://software.intel.com/en-us/rendering-framework">Intel® oneAPI Rendering Toolkit</a> and is released under the permissive <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
+      <p>Open VKL provides a C API, and also supports applications written with the Intel® Implicit SPMD Program Compiler (Intel® ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, AVX-512, and NEON instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
       <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
       <h2 id="version-history">Version History</h2>
+      <h3 id="open-vkl-1.0.0">Open VKL 1.0.0</h3>
+      <ul>
+      <li>The version 1.0 release marks long term API stability (until v2.0)</li>
+      <li>Open VKL can now be built for ARM CPUs that support Neon</li>
+      <li>Iterator API updates:
+      <ul>
+      <li>Introducing interval and hit iterator contexts, which hold iterator-specific configuration (eliminates value selector objects)</li>
+      <li>Interval and hit iteration is now supported on any volume attribute</li>
+      <li>Interval iterators now include a <code>time</code> parameter</li>
+      <li>Interval iterators now support the <code>intervalResolutionHint</code> parameter, replacing <code>maxIteratorDepth</code> and <code>elementaryCellIteration</code></li>
+      </ul></li>
+      <li>Supporting configurable background values; default is now <code>VKL_BACKGROUND_UNDEFINED</code> (NaN) for all volume types</li>
+      <li><code>vklGetValueRange()</code> now supports all volume attributes</li>
+      <li>Added ISPC-side API bindings for <code>vklGetNumAttributes()</code> and <code>vklGetValueRange()</code></li>
+      <li>Structured regular volumes:
+      <ul>
+      <li>Added support for tricubic filtering</li>
+      <li>More accurate gradient computations respecting filter mode</li>
+      <li>Hit iteration robustness improvements</li>
+      </ul></li>
+      <li>VDB volumes:
+      <ul>
+      <li>Interval and hit iteration robustness improvements</li>
+      <li>Corrected interval iterator <code>nominalDeltaT</code> computation for non-normalized ray directions and non-uniform object-space grid spacings</li>
+      <li>Fixed bug which could cause incorrect value range computations for temporally varying volumes</li>
+      </ul></li>
+      <li>vklExamples additions demonstrating:
+      <ul>
+      <li>Multi-attribute interval / hit iteration</li>
+      <li>Configurable background values</li>
+      <li>Temporally varying volumes</li>
+      </ul></li>
+      <li>Superbuild updates to latest versions of dependencies</li>
+      <li>Now requiring minimum versions:
+      <ul>
+      <li>Embree 3.13.1</li>
+      <li>rkcommon 1.7.0</li>
+      <li>ISPC 1.16.0</li>
+      </ul></li>
+      </ul>
       <h3 id="open-vkl-0.13.0">Open VKL 0.13.0</h3>
       <ul>
       <li>Driver (now device) API changes:
