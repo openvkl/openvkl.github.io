@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 270.93 270.93" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient6771" x1="523.71" x2="916.49" y1="151.18" y2="755.91" gradientTransform="translate(144.89 -45.741)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#76ceff" offset="0"/>
+   <stop stop-color="#00a3f6" offset="1"/>
+  </linearGradient>
+  <marker id="Arrow2Lend-2" overflow="visible" orient="auto">
+   <path transform="matrix(-1.1,0,0,-1.1,-1.1,0)" d="m8.7186 4.0337-10.926-4.0177 10.926-4.0177c-1.7455 2.3721-1.7354 5.6175-6e-7 8.0354z" fill="#252525" fill-rule="evenodd" stroke="#252525" stroke-linejoin="round" stroke-width=".625"/>
+  </marker>
+ </defs>
+ <g>
+  <path d="m66.185 175.47 34.641 20v-80l34.641 20v120l-69.282-40zm-34.641-20 34.641 20v40l-34.641-20z" fill="#0068b5"/>
+  <path d="m31.544 75.467 34.641 20v40l-34.641-20z" fill="#0068b5"/>
+  <path d="m135.47 135.47 34.641-20v40l69.282-40v80l-103.92 60z" fill="#00a3f6"/>
+  <path d="m66.185 95.467 103.92-60v40l-103.92 60z" fill="#00a3f6"/>
+ </g>
+ <g fill="#76ceff">
+  <path d="m170.11 115.47 34.641-20 34.641 20-69.282 40z"/>
+  <path d="m100.83 115.47 34.641-20 34.641 20-34.641 20z"/>
+  <path d="m31.544 75.467 103.92-60 34.641 20-103.92 60z"/>
+ </g>
+ <g fill="none" stroke-dasharray="1.05833, 1.05833" stroke-width=".52917">
+  <g stroke="#555">
+   <path d="m100.83 75.467v40"/>
+   <path d="m135.47 55.467v40"/>
+   <path d="m170.11 115.47 34.641 20"/>
+  </g>
+  <g stroke="#252525">
+   <path d="m135.47 255.47v-120"/>
+   <path d="m170.11 235.47v-120"/>
+   <path d="m204.75 215.47v-80"/>
+  </g>
+ </g>
+ <path d="m31.544 155.47 34.641-20 34.641 20-34.641 20zm34.641 20 34.641-20v40z" fill="#76ceff"/>
+ <g fill="none">
+  <g stroke-dasharray="1.05833, 1.05833" stroke-width=".52917">
+   <path d="m100.83 235.47v-120" stroke="#252525"/>
+   <path d="m100.83 155.47 34.641 20 103.92-60" stroke="#252525"/>
+   <path d="m100.83 155.47-34.641 20" stroke="#555"/>
+  </g>
+  <g stroke="#252525" stroke-dasharray="1.05833, 1.05833" stroke-width=".52917">
+   <path d="m100.83 195.47 34.641 20 103.92-60"/>
+   <path d="m66.185 95.467 103.92-60"/>
+   <path d="m100.83 35.467 34.641 20"/>
+   <path d="m66.185 55.467 34.641 20"/>
+  </g>
+  <g stroke="#00285a" stroke-width=".79375">
+   <g>
+    <path d="m31.544 155.47 69.282 40v-80l34.641-20 34.641 20v40l69.282-40v80l-103.92 60"/>
+    <path d="m239.39 115.47-34.641-20-34.641 20"/>
+    <path d="m31.544 115.47 34.641 20 103.92-60v-40l-34.641-20-103.92 60z"/>
+    <path d="m31.544 75.467 34.641 20v40"/>
+    <path d="m66.185 95.467 103.92-60"/>
+   </g>
+   <path d="m100.83 115.47 34.641 20"/>
+   <path d="m170.11 115.47-34.641 20"/>
+   <path d="m135.47 255.47v-120"/>
+  </g>
+  <path d="m31.544 75.467 103.92-60 103.92 60v120l-103.92 60-103.92-60z" stroke="#252525" stroke-width="1.0583"/>
+  <path d="m66.185 215.47v-40" stroke="#252525" stroke-dasharray="1.05833, 1.05833" stroke-width=".52917"/>
+  <path d="m31.544 155.47 34.641-20" stroke="#00285a" stroke-width=".79375"/>
+  <path d="m100.83 155.47-34.641-20" stroke="#00285a" stroke-width=".79375"/>
+ </g>
+ <g fill="none">
+  <path d="m48.963 105.29-45.517 19.204" stroke="#f3f3f3" stroke-width="6"/>
+  <path d="m171.58 53.86 52.257-21.882" stroke="#f3f3f3" stroke-width="6"/>
+  <path d="m48.963 105.29-8.6812 3.6583-36.835 15.546" stroke="#252525" stroke-width=".80227"/>
+  <path d="m48.963 105.29 181.19-76.31" marker-end="url(#Arrow2Lend-2)" stroke="#252525" stroke-width=".80227"/>
+ </g>
+ <path d="m48.963 105.29 122.54-51.547" fill="#fec91b" stroke="#fec91b" stroke-width="6"/>
+ <path d="m48.963 105.29 122.54-51.547" fill="#f3d54e" stroke="#252525" stroke-dasharray="0.80227, 0.80227" stroke-width=".80227"/>
+ <g fill="none">
+  <path d="m100.83 175.47-14.214-1.8157m-48.879-6.2744-24.236-3.2671" stroke="#f3f3f3" stroke-width="6"/>
+  <path d="m185.21 186.18 66.468 8.8732" stroke="#f3f3f3" stroke-width="6"/>
+  <path d="m37.732 167.38-24.236-3.2671" stroke="#252525" stroke-width=".80227"/>
+  <path d="m86.611 173.65 171.01 21.835" marker-end="url(#Arrow2Lend-2)" stroke="#252525" stroke-width=".80227"/>
+ </g>
+ <path d="m100.83 175.47 84.389 10.713" fill="#fec91b" stroke="#fec91b" stroke-width="6"/>
+ <path d="m100.83 175.47 84.389 10.713" fill="#f3d54e" stroke="#252525" stroke-dasharray="0.80227, 0.80227" stroke-width=".80227"/>
+ <g transform="matrix(.26625 0 0 .26625 -12.684 -6.4207)" display="none" stroke="#252525" stroke-width="4">
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" fill="url(#linearGradient6771)"/>
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" fill="none"/>
+ </g>
+ <path d="m37.732 167.38 48.879 6.2744" fill="#fec91b" stroke="#fec91b" stroke-width="6"/>
+ <path d="m37.732 167.38 48.879 6.2744" fill="#f3d54e" stroke="#252525" stroke-dasharray="0.80227, 0.80227" stroke-width=".80227"/>
+</svg>

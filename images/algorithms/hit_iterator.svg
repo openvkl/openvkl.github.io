@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 270.93 270.93" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient6771" x1="523.71" x2="916.49" y1="151.18" y2="755.91" gradientTransform="translate(144.89 -45.741)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#76ceff" offset="0"/>
+   <stop stop-color="#00a3f6" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient986" x1="654.63" x2="425.51" y1="642.52" y2="396.85" gradientTransform="translate(144.89 -45.741)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#0068b5" offset="0"/>
+   <stop stop-color="#b4f0ff" offset="1"/>
+  </linearGradient>
+  <marker id="Arrow2Lend" overflow="visible" orient="auto">
+   <path transform="matrix(-1.1,0,0,-1.1,-1.1,0)" d="m8.7186 4.0337-10.926-4.0177 10.926-4.0177c-1.7455 2.3721-1.7354 5.6175-6e-7 8.0354z" fill="#252525" fill-rule="evenodd" stroke="#252525" stroke-linejoin="round" stroke-width=".625"/>
+  </marker>
+ </defs>
+ <g transform="matrix(.26625 0 0 .26625 -12.684 -6.4207)" display="none" stroke="#252525" stroke-width="4">
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" fill="url(#linearGradient6771)"/>
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" fill="none"/>
+ </g>
+ <g transform="matrix(.26625 0 0 .26625 -12.684 -6.4207)" fill="none" stroke="#252525" stroke-dasharray="4, 4" stroke-width="2">
+  <path d="m556.44 532.91 392.78 226.77"/>
+  <path d="m556.44 532.91-392.78 226.77"/>
+  <path d="m556.44 532.91v-453.54"/>
+ </g>
+ <g transform="matrix(.26625 0 0 .26625 -21.958 -2.4207)" fill="none">
+  <path d="m842.38 555.95 237.77 29.874" stroke="#e9e9e9" stroke-width="8"/>
+  <path d="m842.38 555.95 237.77 29.874" marker-end="url(#Arrow2Lend)" stroke="#252525" stroke-width="3"/>
+ </g>
+ <g transform="matrix(.26625 0 0 .26625 -12.684 -6.4207)">
+  <path d="m163.66 585.83s38.603-111.65 130.93-37.795 125.71 223.76 261.85 302.36c0 0 163.66-56.693 229.12-170.08s163.66-283.46 163.66-283.46-98.195 94.488-229.12 56.693c-130.93-37.795-163.66-245.67-163.66-245.67s-90.742 118.46-229.12 170.08-163.66 207.87-163.66 207.87z" fill="url(#linearGradient986)"/>
+  <path d="m163.66 585.83s38.603-111.65 130.93-37.795 125.71 223.76 261.85 302.36c0 0 163.66-56.693 229.12-170.08s163.66-283.46 163.66-283.46-98.195 94.488-229.12 56.693c-130.93-37.795-163.66-245.67-163.66-245.67s-90.742 118.46-229.12 170.08-163.66 207.87-163.66 207.87z" fill="none" stroke="#262626" stroke-width="3.7795"/>
+ </g>
+ <circle cx="117.74" cy="133.99" r="3.8691" fill="#fec91b" stroke="#e96115" stroke-linejoin="bevel" stroke-width="1.184"/>
+ <path d="m4.7453 119.79 113 14.197" fill="#e9e9e9" stroke="#e9e9e9" stroke-width="2.13"/>
+ <path d="m4.7453 119.79 113 14.197" fill="none" stroke="#252525" stroke-width=".79874"/>
+ <g transform="matrix(.26625 0 0 .26625 -12.684 -6.4207)" fill="none">
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" stroke="#252525" stroke-width="4"/>
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z"/>
+ </g>
+</svg>

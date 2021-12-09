@@ -1,480 +1,636 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
-  <title>Intel Open Volume Kernel Library</title>
-  <link rel="stylesheet" type="text/css" media="screen" href="stylesheet.css">
-        <!-- for teaser carousel -->
-    <script src="scripts/jquery.min.js"></script>
-    <script src="scripts/popper.min.js"></script>
-    <script src="scripts/bootstrap.min.js"></script>
-
-    <script>
-      /*
-       * Whenever we detect a slide change event, stop playing videos,
-       * and reset them, and play the active video.
-       */
-      jQuery(document).ready(function () {
-
-        jQuery('#demo').on('slid.bs.carousel', function () {
-          jQuery(this).find("video").each(function (i, video) {
-            video.pause();
-            video.currentTime = 0;
-          });
-          jQuery(this).find(".active video").each(function (i, video) {
-            video.play();
-          })
-        });
-      });
-    </script>
-  </head>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="static-fw/bootstrap-5.0.0-beta2-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static-fw/fonts/font-awesome-4.7.0/css/font-awesome.css">
+  <link rel="stylesheet" href="static-fw/css/intel.css">
+  <link rel="stylesheet" href="static-fw/css/arvacode.css">
+  
+  
+  
+  <title>Intel Open VKL</title>
+  
+  <style>
+    
+      
+    #open_standards .card {
+        background-color: #FFFFFFAA;
+    }
+    
+  </style>
+  
+</head>
 <body>
-  <div id="header">
-    <div id="header-github">
-      <a id="forkme-banner" href="https://github.com/OpenVKL/openvkl">View on GitHub</a>
-    </div>
-    <div id="header-title">
-      Intel<sup>®</sup> Open Volume Kernel Library
-    </div>
+    <header>
+      <!-- main navbar, collapses to hamburger at 'small' sizes -->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <!-- container-xl stops setting width to 100% after xl size -->
+  <div class="container-xl">
+    
+    <a class="navbar-brand" href="#">
+    
+    <img id="product-logo" src="images/oneapi-word-mark-open-vkl-stacked-3000.png" alt="" height="48">
+    </a>
 
-    <div id="header-navbar">
-      <ul>
-        <li id="selected" ><a href="index.html">Overview</a></li>
-        <li><a href="documentation.html">API Documentation</a></li>
-        <li><a href="examples.html">Examples</a></li>
-        <li><a href="downloads.html">Downloads</a></li>
-        <li><a href="https://github.com/OpenVKL/openvkl/issues">Bugs/Issues</a></li>
-        <li><a href="related_projects.html">Related Projects</a></li>
-      </ul>
-    </div>
-    <div id="header-spacing"></div>
-  </div>
+    <!-- hamburger, shows when nav is collapsed, putting it after brand right-aligns it -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar"
+            aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div id="content-wrap">
-    <div id="content">
-
-      <div id="demo" class="carousel slide" data-ride="carousel">
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <!-- main navigation links -->
+      <ul class="navbar-nav">
       
-      <!-- Indicators -->
-      <ol class="carousel-indicators">
-      <li data-target="#demo" data-slide-to="0" class="active">
-      </li>
-      <li data-target="#demo" data-slide-to="1">
-      </li>
-      <li data-target="#demo" data-slide-to="2">
-      </li>
-      <li data-target="#demo" data-slide-to="3">
-      </li>
-      <li data-target="#demo" data-slide-to="4">
-      </li>
-      <li data-target="#demo" data-slide-to="5">
-      </li>
-      <li data-target="#demo" data-slide-to="6">
-      </li>
-      <li data-target="#demo" data-slide-to="7">
-      </li>
-      <li data-target="#demo" data-slide-to="8">
-      </li>
-      <li data-target="#demo" data-slide-to="9">
-      </li>
-      </ol>
-      <div class="carousel-inner">
-      
-      <div class="carousel-item active">
-      <img src="images/tornado_mb_small.jpg">
-      <div class="carousel-caption">
-      <h3>
-      Motion blur with temporally structured volumes
-      </h3>
-      <p>
-      Example rendering of a temporally structured, structured regular volume
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/tuv_example.gif">
-      <div class="carousel-caption">
-      <h3>
-      Motion blur with temporally unstructured volumes (TUV)
-      </h3>
-      <p>
-      Changing shutter time and duration for a TUV structured regular volume. TUVs allow for irregular time data and temporal refitting per voxel for improved fidelity and memory efficiency.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/siggraph20_cloudscape.jpg">
-      <div class="carousel-caption">
-      <h3>
-      SIGGRAPH 2020 demo: Interactive Volumetric Path Traced Cloudscape
-      </h3>
-      <p>
-      Interactive rendering of a large-scale volumetric cloudscape of VDB volumes, using Intel® Open Volume Kernel Library, Intel® OSPRay, and Intel® OSPRay Studio. <a href="https://www.youtube.com/watch?v=cpRMNuyiTig">Video</a>
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/hacc_zoom.jpg">
-      <div class="carousel-caption">
-      <h3>
-      Particle Volume Support
-      </h3>
-      <p>
-      Open VKL based volumetric path tracing of a 5.9 million particle subset of the HACC DarkSky simulation. Data courtesy of Salman Habib and Katrin Heitmann at Argonne National Laboratory.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/fire_extinguisher.jpg">
-      <div class="carousel-caption">
-      <h3>
-      VDB Support
-      </h3>
-      <p>
-      Created in SideFX Houdini, rendered in OSPRay 2.0 with Open VKL and Open Image Denoise.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/cloud_standalone.jpg">
-      <div class="carousel-caption">
-      <h3>
-      Open VKL based volumetric path tracing of the Disney cloud
-      </h3>
-      <p>
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item" data-interval="20000">
-      <video muted loop poster="images/deferred_loading_0001.jpg" width="1024" height="576">
-      <!-- Fall back to mp4 for browser compatibility, or a preview
-      frame if video is not supported. -->
-      <source src="images/deferred_loading.webm" type="video/webm">
-      <source src="images/deferred_loading.mp4" type="video/mp4">
-      <img src="images/deferred_loading_0423.jpg"> </video>
-      <div class="carousel-caption">
-      <h3>
-      Interactive Data Exploration
-      </h3>
-      <p>
-      Loading leaf data from the Disney Moana cloud dataset while the user manipulates the viewport. White regions indicate inner nodes, while blue regions indicate fully-loaded leaf data.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/moana_cloud_sunset.jpg">
-      <div class="carousel-caption">
-      <h3>
-      OSPRay 2.0 + Open VKL
-      </h3>
-      <p>
-      The Disney Moana island and cloud rendered with OSPRay 2.0 using the new Open VKL integration.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/coffee.jpg">
-      <div class="carousel-caption">
-      <h3>
-      VDB Support
-      </h3>
-      <p>
-      Created in SideFX Houdini, rendered in OSPRay 2.0 with Open VKL and Open Image Denoise.
-      </p>
-      </div>
-      </div>
-      <div class="carousel-item">
-      <img src="images/jf_smoke.jpg">
-      <div class="carousel-caption">
-      <h3>
-      VDB Support
-      </h3>
-      <p>
-      Created in SideFX Houdini, rendered using Open VKL.
-      </p>
-      </div>
-      </div>
-      </div>
-      <!-- Left and right controls -->
-      <p>
-      <a class="carousel-control-prev" href="#demo" role="button" data-slide="prev"> <span class="carousel-control-prev-icon"></span> </a> <a class="carousel-control-next" href="#demo" role="button" data-slide="next"> <span class="carousel-control-next-icon"></span> </a>
-      </p>
-      </div>
-      <hr>
-      <h1 id="overview">Overview</h1>
-      <p>Intel® Open Volume Kernel Library (Intel® Open VKL) is a collection of high-performance volume computation kernels, developed at Intel. The target users of Open VKL are graphics application engineers who want to improve the performance of their volume rendering applications by leveraging Open VKL’s performance-optimized kernels, which include volume traversal and sampling functionality for a variety of volumetric data formats. The kernels are optimized for the latest Intel® processors with support for SSE, AVX, AVX2, and AVX-512 instructions, and for ARM processors with support for NEON instructions. Open VKL is part of the <a href="https://software.intel.com/en-us/rendering-framework">Intel® oneAPI Rendering Toolkit</a> and is released under the permissive <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
-      <p>Open VKL provides a C API, and also supports applications written with the Intel® Implicit SPMD Program Compiler (Intel® ISPC) by also providing an ISPC interface to the core volume algorithms. This makes it possible to write a renderer in ISPC that automatically vectorizes and leverages SSE, AVX, AVX2, AVX-512, and NEON instructions. ISPC also supports runtime code selection, thus ISPC will select the best code path for your application.</p>
-      <p>In addition to the volume kernels, Open VKL provides tutorials and example renderers to demonstrate how to best use the Open VKL API.</p>
-      <h2 id="version-history">Version History</h2>
-      <h3 id="open-vkl-1.1.0">Open VKL 1.1.0</h3>
-      <ul>
-      <li>vklExamples improvements: asynchronous rendering, multiple viewports, docking, and more</li>
-      <li>Fixed bug in <code>openvkl_utility_vdb</code> which could lead to crashes when creating VDB volumes with temporally constant tiles</li>
-      <li>Superbuild updates to latest versions of dependencies</li>
-      <li>Minimum rkcommon version is now 1.8.0</li>
-      </ul>
-      <h3 id="open-vkl-1.0.1">Open VKL 1.0.1</h3>
-      <ul>
-      <li>Fixed issue in <code>structuredRegular</code> and <code>vdb</code> interval iterators that could lead to erroneous initial intervals for certain ray inputs</li>
-      <li>Fixed handling of <code>intervalResolutionHint</code> interval iterator context parameter for <code>amr</code>, <code>particle</code>, and <code>unstructured</code> volumes with small numbers of cells / primitives</li>
-      </ul>
-      <h3 id="open-vkl-1.0.0">Open VKL 1.0.0</h3>
-      <ul>
-      <li>The version 1.0 release marks long term API stability (until v2.0)</li>
-      <li>Open VKL can now be built for ARM CPUs that support Neon</li>
-      <li>Iterator API updates:
-      <ul>
-      <li>Introducing interval and hit iterator contexts, which hold iterator-specific configuration (eliminates value selector objects)</li>
-      <li>Interval and hit iteration is now supported on any volume attribute</li>
-      <li>Interval iterators now include a <code>time</code> parameter</li>
-      <li>Interval iterators now support the <code>intervalResolutionHint</code> parameter, replacing <code>maxIteratorDepth</code> and <code>elementaryCellIteration</code></li>
-      </ul></li>
-      <li>Supporting configurable background values; default is now <code>VKL_BACKGROUND_UNDEFINED</code> (NaN) for all volume types</li>
-      <li><code>vklGetValueRange()</code> now supports all volume attributes</li>
-      <li>Added ISPC-side API bindings for <code>vklGetNumAttributes()</code> and <code>vklGetValueRange()</code></li>
-      <li>Structured regular volumes:
-      <ul>
-      <li>Added support for tricubic filtering</li>
-      <li>More accurate gradient computations respecting filter mode</li>
-      <li>Hit iteration robustness improvements</li>
-      </ul></li>
-      <li>VDB volumes:
-      <ul>
-      <li>Interval and hit iteration robustness improvements</li>
-      <li>Corrected interval iterator <code>nominalDeltaT</code> computation for non-normalized ray directions and non-uniform object-space grid spacings</li>
-      <li>Fixed bug which could cause incorrect value range computations for temporally varying volumes</li>
-      </ul></li>
-      <li>vklExamples additions demonstrating:
-      <ul>
-      <li>Multi-attribute interval / hit iteration</li>
-      <li>Configurable background values</li>
-      <li>Temporally varying volumes</li>
-      </ul></li>
-      <li>Superbuild updates to latest versions of dependencies</li>
-      <li>Now requiring minimum versions:
-      <ul>
-      <li>Embree 3.13.1</li>
-      <li>rkcommon 1.7.0</li>
-      <li>ISPC 1.16.0</li>
-      </ul></li>
-      </ul>
-      <h3 id="open-vkl-0.13.0">Open VKL 0.13.0</h3>
-      <ul>
-      <li>Driver (now device) API changes:
-      <ul>
-      <li>Renamed <code>VKLDriver</code> to <code>VKLDevice</code> and updated associated device setup APIs</li>
-      <li>Use of multiple concurrent devices is now supported; therefore <code>vklNewVolume()</code> and <code>vklNewData()</code> now require a device handle</li>
-      <li>Renamed the <code>ispc_device</code> module and <code>ispc</code> device to <code>cpu_device</code> and <code>cpu</code>, respectively</li>
-      <li>The <code>OPENVKL_CPU_DEVICE_DEFAULT_WIDTH</code> environment variable can now be used to change the <code>cpu</code> device’s default SIMD width at run time</li>
-      </ul></li>
-      <li>Added new <code>VKLTemporalFormat</code> enum used for temporally varying volume parameterization</li>
-      <li>VDB volumes:
-      <ul>
-      <li>Support for temporally structured and temporally unstructured (TUV) attribute data, which can be used for motion blurred rendering</li>
-      <li>Supporting tricubic filtering via <code>VKL_FILTER_TRICUBIC</code> filter type</li>
-      <li>Added support for half precision float-point (FP16) attribute data via <code>VKL_HALF</code> data type</li>
-      <li>Added a new <code>InnerNode</code> observer and associated utility functions which allows applications to introspect inner nodes of the internal tree structure, including bounding boxes and value ranges</li>
-      <li>Renamed <code>VKL_FORMAT_CONSTANT_ZYX</code> to <code>VKL_FORMAT_DENSE_ZYX</code></li>
-      </ul></li>
-      <li>Structured regular and spherical volumes:
-      <ul>
-      <li>Added support for half precision float-point (FP16) attribute data via <code>VKL_HALF</code> data type</li>
-      </ul></li>
-      <li>Unstructured volumes:
-      <ul>
-      <li>Added support for elementary cell iteration via the <code>elementaryCellIteration</code> parameter</li>
-      <li>Robustness improvements for hit iteration</li>
-      </ul></li>
-      <li>AMR volumes:
-      <ul>
-      <li>Improved interval iterator implementation, resolving issues with returned interval <code>nominalDeltaT</code> values</li>
-      <li>Interval iterators now support <code>maxIteratorDepth</code> parameter</li>
-      </ul></li>
-      <li>Interval and hit iteration performance improvements when multiple values ranges / values are selected</li>
-      <li>Added new temporal compression utilities which applications can use for processing temporally unstructured attribute data</li>
-      <li>vklExamples additions demonstrating:
-      <ul>
-      <li>Motion blurred rendering on temporally structured and temporally unstructured <code>vdb</code> volumes</li>
-      <li>Tricubic filtering on <code>vdb</code> volumes</li>
-      <li>Half-precision floating-point (FP16) support for <code>structuredRegular</code>, <code>structuredSpherical</code>, and <code>vdb</code> volumes</li>
-      <li>Elementary cell interval iteration on <code>unstructured</code> volumes</li>
-      <li>Use of the <code>InnerNode</code> observer on <code>vdb</code> volumes</li>
-      </ul></li>
-      <li>Superbuild updates to:
-      <ul>
-      <li>Embree 3.13.0</li>
-      <li>rkcommon 1.6.1</li>
-      </ul></li>
-      <li>Minimum rkcommon version is now 1.6.1</li>
-      </ul>
-      <h3 id="open-vkl-0.12.1">Open VKL 0.12.1</h3>
-      <ul>
-      <li>Fixed bug in VDB volume interval iterator implementation which could lead to missed intervals or incorrect value ranges in returned intervals</li>
-      </ul>
-      <h3 id="open-vkl-0.12.0">Open VKL 0.12.0</h3>
-      <ul>
-      <li>Added support for temporally varying volumes with associated API changes for sampling, gradients, and hit iteration. This feature can be used to enable motion blurred rendering</li>
-      <li>Structured regular volumes:
-      <ul>
-      <li>Support for temporally structured and temporally unstructured (TUV) input data</li>
-      <li>Improved <code>nominalDeltaT</code> for interval iteration</li>
-      <li>Interval iterator robustness improvements for axis-aligned rays</li>
-      <li>Sampling performance improvements</li>
-      </ul></li>
-      <li>VDB volumes:
-      <ul>
-      <li>Multi-attribute support (including three-component float grids)</li>
-      <li>Interval iterator robustness improvements for axis-aligned rays</li>
-      <li>Performance improvements for scalar sampling</li>
-      <li>Now restricting volumes to exactly four levels</li>
-      <li>Allowing leaf nodes on the lowest level only</li>
-      </ul></li>
-      <li>Unstructured volumes:
-      <ul>
-      <li>Improved <code>nominalDeltaT</code> for interval iteration</li>
-      </ul></li>
-      <li><code>vdb_util</code> updates:
-      <ul>
-      <li>Support for loading multi-attribute .vdb files (<code>float</code> and <code>Vec3s</code> grids)</li>
-      <li>Fix order of rotation matrix coefficients loaded from .vdb files</li>
-      </ul></li>
-      <li>vklExamples additions demonstrating:
-      <ul>
-      <li>Motion blurred rendering on temporally structured and temporally unstructured volumes (<code>structuredRegular</code> only)</li>
-      <li>Support for <code>vdb</code> multi-attribute volumes</li>
-      <li>Hit iterator time support</li>
-      </ul></li>
-      <li>Superbuild updates to:
-      <ul>
-      <li>Embree 3.12.2</li>
-      <li>rkcommon 1.6.0</li>
-      <li>ISPC 1.15.0</li>
-      <li>OpenVDB 8.0.0</li>
-      </ul></li>
-      <li>Minimum rkcommon version is now 1.6.0</li>
-      </ul>
-      <h3 id="open-vkl-0.11.0">Open VKL 0.11.0</h3>
-      <ul>
-      <li>Introduced API support for multi-attribute volumes, including APIs for sampling multiple attributes simultaneously
-      <ul>
-      <li>Initially only <code>structuredRegular</code> and <code>structuredSpherical</code> volume types support multi-attribute data</li>
-      </ul></li>
-      <li>Iterator APIs now work on sampler objects rather than volumes, supporting finer-grained configurability</li>
-      <li>Observers can now be created for both volume and sampler objects
-      <ul>
-      <li><code>LeafNodeAccess</code> observers must now be created on sampler objects</li>
-      </ul></li>
-      <li>Log and error callbacks now support a user pointer</li>
-      <li><code>vdb</code> volume interval iterators:
-      <ul>
-      <li>Added support for elementary cell iteration when <code>maxIteratorDepth</code> is set to <code>VKL_VDB_NUM_LEVELS</code>-1</li>
-      <li>Up to 2x faster iteration</li>
-      </ul></li>
-      <li><code>unstructured</code> and <code>particle</code> volume interval iterators:
-      <ul>
-      <li>Improved interior empty space skipping behavior</li>
-      <li>Added support for configurable iterator depth via the <code>maxIteratorDepth</code> parameter</li>
-      </ul></li>
-      <li>Added support for filter modes in <code>structuredRegular</code> and <code>structuredSpherical</code> volumes</li>
-      <li><code>amr</code> volumes now support <code>method</code> parameter on sampler objects</li>
-      <li>Added new <code>interval_iterator_debug</code> renderer in <code>vklExamples</code> to visualize interval iteration behavior</li>
-      <li>Hit iterator accuracy improvements for <code>unstructured</code> volumes</li>
-      <li>Fixed bugs in <code>amr</code> and <code>vdb</code> volume bounding box computations</li>
-      <li>Fixed bug in <code>unstructured</code> volume gradient computations near empty regions</li>
-      <li>Minimum ISPC version is now v1.14.1</li>
-      </ul>
-      <h3 id="open-vkl-0.10.0-alpha">Open VKL 0.10.0 (alpha)</h3>
-      <ul>
-      <li>Added new <code>particle</code> volume type supporting Gaussian radial basis functions</li>
-      <li>Introduced <code>VKLSampler</code> objects allowing configuration of sampling and gradient behavior</li>
-      <li>Added stream-wide sampling and gradient APIs</li>
-      <li>Introduced a new way to allocate iterators, giving the user more freedom in choosing allocation schemes and reducing iterator size</li>
-      <li>Added support for strided data arrays</li>
-      <li>Added gradient implementations for <code>amr</code> and <code>vdb</code> volumes</li>
-      <li>Hit iterator accuracy improvements for <code>amr</code>, <code>structuredSpherical</code>, <code>unstructured</code>, and <code>vdb</code> volumes</li>
-      <li>Up to 4x performance improvement for <code>structuredRegular</code> and <code>structuredSpherical</code> sampling for volumes in the 1-2GB range</li>
-      <li>Up to 2x performance improvement for <code>structuredRegular</code> interval iteration</li>
-      <li>Improved commit speed for <code>unstructured</code> volumes</li>
-      <li>Improved value range computation in <code>vdb</code> volumes</li>
-      <li>Improved isosurface shading in <code>vklExamples</code></li>
-      <li>Improved parameter validation across all volume types</li>
-      <li>Aligned <code>VKLHit[4,8,16]</code> and <code>VKLInterval[4,8,16]</code> structs</li>
-      <li>Added hit epsilon to <code>VKLHit[4,8,16]</code></li>
-      <li>Updated parameter names for <code>vdb</code> volumes</li>
-      <li>Renamed <code>VKLVdbLeafFormat</code> to <code>VKLFormat</code></li>
-      <li>Fixed incorrect use of system-installed CMake in superbuild while building dependencies</li>
-      <li>Fixed various memory leaks</li>
-      <li>Fixed crashes which could occur in <code>VdbVolume::cleanup()</code> and <code>vklShutdown()</code></li>
-      <li>Moved from ospcommon to rkcommon v1.4.1</li>
-      </ul>
-      <h3 id="open-vkl-0.9.0-alpha">Open VKL 0.9.0 (alpha)</h3>
-      <ul>
-      <li>Added support for VDB sparse structured volumes (<code>"vdb"</code> volume type)</li>
-      <li>Added <code>vdb_util</code> library to simplify instantiation of VDB volumes, and support loading of .vdb files using OpenVDB</li>
-      <li>Added <code>VKLObserver</code> and associated APIs, which may used by volume types to pass information back to the application
-      <ul>
-      <li>A <code>LeafNodeAccess</code> observer is provided for VDB volumes to support on-demand loading of leaf nodes</li>
-      </ul></li>
-      <li>Structured regular volumes:
-      <ul>
-      <li>Up to 6x performance improvement for scalar iterator initialization</li>
-      <li>Up to 2x performance improvement for scalar iterator iteration</li>
-      </ul></li>
-      <li>General improvements to the CMake Superbuild for building Open VKL and all associated dependencies</li>
-      <li>Allowing instantiation of ISPC driver for any supported SIMD width (in addition to the default automatically selected width)</li>
-      <li>Volume type names are now camelCase (legacy snake_case type names are deprecated), impacting <code>structuredRegular</code> and <code>structuredSpherical</code> volumes</li>
-      <li>Enabling <code>flushDenormals</code> driver mode by default</li>
-      <li>Aligning public <code>vkl_vvec3f[4,8,16]</code> and <code>vkl_vrange1f[4,8,16]</code> types</li>
-      <li>Added <code>VKL_LOG_NONE</code> log level</li>
-      <li>Fixed bug in <code>vklExamples</code> which could lead to improper rendering on macOS Catalina</li>
-      <li>Fixed bug in unstructured volume interval iterator which could lead to errors with some combinations of lane masks</li>
-      <li>Now providing binary releases for Linux, macOS, and Windows</li>
-      </ul>
-      <h3 id="open-vkl-0.8.0-alpha">Open VKL 0.8.0 (alpha)</h3>
-      <ul>
-      <li>Added support for structured volumes on spherical grids (<code>"structured_spherical"</code> volume type)</li>
-      <li>Structured regular volumes:
-      <ul>
-      <li>Up to 8x performance improvement for scalar (single-wide) sampling</li>
-      <li>Fixed hit iterator bug which could lead to isosurfacing artifacts</li>
-      <li>Renamed <code>voxelData</code> parameter to <code>data</code></li>
-      </ul></li>
-      <li>Unstructured volumes:
-      <ul>
-      <li>Up to 4x performance improvement for scalar (single-wide) sampling</li>
-      <li>Improved interval iterator implementation for more efficient space skipping and tighter value bounds on returned intervals</li>
-      <li>Now using Embree for BVH builds for faster build times / volume commits</li>
-      <li>Renamed <code>vertex.value</code> and <code>cell.value</code> parameters to <code>vertex.data</code> and <code>cell.data</code>, respectively</li>
-      </ul></li>
-      <li>AMR volumes:
-      <ul>
-      <li>renamed <code>block.cellWidth</code> parameter to <code>cellWidth</code>, and clarified API documentation</li>
-      </ul></li>
-      <li>Added <code>vklGetValueRange()</code> API for querying volume value ranges</li>
-      <li>Added new driver parameters, APIs, and environment variables allowing user control of log levels, log / error output redirection, number of threads, and other options</li>
-      <li><code>vklIterateHit[4,8,16]()</code> and <code>vklIterateInterval[4,8,16]()</code> calls now only populate hit / interval data for active lanes</li>
-      <li>Changed <code>VKLDataType</code> enum values for better forward compatibility</li>
-      <li>ISPC-side hit and interval iterator objects must now be declared <code>varying</code></li>
-      <li>More flexible ISA build configuration through <code>OPENVKL_MAX_ISA</code> and <code>OPENVKL_ISA_*</code> CMake build options</li>
-      <li>Minimum ospcommon version is now 1.1.0</li>
-      </ul>
-      <h3 id="open-vkl-0.7.0-alpha">Open VKL 0.7.0 (alpha)</h3>
-      <ul>
-      <li>Initial public alpha release, with support for structured, unstructured, and AMR volumes.</li>
-      </ul>
-      <h2 id="support-and-contact">Support and Contact</h2>
-      <p>Open VKL is under active development, and though we do our best to guarantee stable release versions a certain number of bugs, as-yet-missing features, inconsistencies, or any other issues are still possible. Should you find any such issues please report them immediately via <a href="https://github.com/OpenVKL/openvkl/issues">Open VKL’s GitHub Issue Tracker</a> (or, if you should happen to have a fix for it, you can also send us a pull request); you may also contact us via email at <a href="mailto:openvkl@googlegroups.com" class="email">openvkl@googlegroups.com</a>.</p>
-      <p>Join our <a href="https://groups.google.com/forum/#!forum/openvkl-announce/join">mailing list</a> to receive release announcements and major news regarding Open VKL.</p>
+        
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" 
+               href="#" id="95dfa6ab-fa71-411a-a6af-fa7be2f6b6f5" role="button" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false">Documentation</a>
+            <ul class="dropdown-menu" aria-labelledby="95dfa6ab-fa71-411a-a6af-fa7be2f6b6f5">
+              
+                <li class="nav-item">
+                
+                  <a
 
+   class="nav-link"
+
+
+  href="https://github.com/openvkl/openvkl#open-vkl-api"
+
+>
+  
+  Open VKL API
+</a>
+
+                
+                </li>
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="examples.html"
+
+>
+  
+  Examples
+</a>
+
+                
+                </li>
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="publications.html"
+
+>
+  
+  Publications
+</a>
+
+                
+                </li>
+              
+            </ul>
+          </li>
+       
+      
+        
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" 
+               href="#" id="264fc695-65bc-4feb-a50f-08a3b3f2d5ff" role="button" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false">RenderKit</a>
+            <ul class="dropdown-menu" aria-labelledby="264fc695-65bc-4feb-a50f-08a3b3f2d5ff">
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="https://www.embree.org"
+
+>
+  
+  Intel&reg; Embree
+</a>
+
+                
+                </li>
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="https://www.openimagedenoise.org"
+
+>
+  
+  Intel&reg; Open Image Denoise
+</a>
+
+                
+                </li>
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="https://www.ospray.org"
+
+>
+  
+  Intel&reg; OSPRay
+</a>
+
+                
+                </li>
+              
+                <li class="nav-item">
+                
+                  <a
+
+   class="nav-link"
+
+
+  href="https://www.ospray.org/ospray_studio"
+
+>
+  
+  Intel&reg; OSPRay Studio
+</a>
+
+                
+                </li>
+              
+            </ul>
+          </li>
+       
+      
+      </ul>
+      
+        
+          <a
+
+   class="nav-link ms-auto"
+
+
+  href="https://www.github.com/OpenVKL/openvkl"
+
+>
+  
+    <li class="fa fa-fw fa-github"></li>
+  
+  GitHub
+</a>
+
+        
+      
+        
+          <a
+
+   class="nav-link"
+
+
+  href="https://www.github.com/OpenVKL/openvkl/releases"
+
+>
+  
+    <li class="fa fa-fw fa-download"></li>
+  
+  Download
+</a>
+
+        
+      
     </div>
   </div>
+</nav>
+    </header>
 
-    <div id="footer">
-    © 2019-2021 Intel Corporation <a href="legal.html">Disclaimer and Legal Information</a>
-    <a href="https://www.intel.com/privacy">Privacy</a>
+    <main class="container-fluid" id="main-content">
+      
+
+  <div class="row banner"
+     >
+  <div class="col-12 px-0">
+    <img class="img-fluid w-100" 
+         src="images/siggraph20_cloudscape.jpg" 
+         alt="">
   </div>
-  </body>
+</div>
 
+  <div class="container-lg blurb"
+     >
+  <div class="row justify-content-center py-5">
+    <div class="col-lg-9">
+      <h1>High Performance Volume Kernels</h1>
+      
+      <p>Intel&reg; Open Volume Kernel Library (Intel&reg; Open VKL) is a collection of high performance volume
+    computation kernels.</p>
+      
+      <p>With Open VKL, you can improve your volume rendering application using
+    a wide variety of volumetric data structures, as well as performance-optimized
+    traversal and sampling algorithms.</p>
+      
+      <p>We optimize Open VKL for the latest Intel&reg; processors with support
+    for SSE, AVX, AVX2, and AVX-512 instructions, and for ARM processors with
+    support for the NEON instruction set.</p>
+      
+      <p>Open VKL is available as open source under the Apache 2.0 license.</p>
+      
+    </div>
+    <div class="col-lg-3" id="blurb-contact">
+      <h2>Get in touch</h2>
+      <ul class="list-unstyled">
+        <li><a href="mailto:openvkl@googlegroups.com"><i class="fa fa-envelope-o fa-fw"></i>Contact us</a></li>
+        
+        <li><a href="https://groups.google.com/forum/#!forum/openvkl-announce/join"><i class="fa fa-envelope-o fa-fw"></i>Subscribe to our mailing list</a></li>
+        
+      </ul>
+      <ul class="list-unstyled">
+        <li><a href="https://www.github.com/OpenVKL/openvkl"><i class="fa fa-github fa-fw"></i>GitHub</a></li>
+        <li><a href="https://www.github.com/OpenVKL/openvkl/issues"><i class="fa fa-bug fa-fw"></i>Report a bug</a></li>
+        <li><a href="https://www.intel.com/content/www/us/en/security-center/vulnerability-handling-guidelines.html"><i class="fa fa-shield fa-fw"></i>Report a security vulnerability</a></li>
+      </ul>
+      <ul class="list-unstyled">
+        <li><a href="https://www.apache.org/licenses/LICENSE-2.0"><i class="fa fa-file-text-o fa-fw"></i>Apache 2.0 License</a></li>
+      </ul>
+    </div>
+  </div>
+</div> <!-- end of blurb -->
+
+  <div class="row justify-content-center py-5 release-notes"
+    >
+  <div class="col-sm-5">
+    <h2 id="release-version">Current Release: v1.1.0</h2>
+    
+    <p>This release improves the example application with asynchronous
+        multi-view rendering.</p>
+    
+    <ul class="list-unstyled">
+      <li><a href="https://www.github.com/OpenVKL/openvkl/releases"><i class="fa fa-github fa-fw"></i>Get it on GitHub</a></li>
+      <li><a href="https://www.github.com/OpenVKL/openvkl/releases/latest"><i class="fa fa-file-text-o fa-fw"></i>Full release notes</a></li>
+    </ul>
+  </div>
+</div> <!-- end of release-notes -->
+
+  <div class="container-lg"
+  >
+  <div class="row justify-content-center py-5 feature-gallery">
+    <div class="row justify-content-center pb-5">
+      <div class="col-sm-6">
+        <h2>Algorithms </h2>
+      </div>
+    </div>
+
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/algorithms/point_sampling.svg" width="100%" height="100%">
+          
+            <img src="images/algorithms/point_sampling.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Point Sampling</h5>
+      
+      <p class="card-text">Open VKL provides highly optimized sampling routines for all data structures.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/algorithms/hit_iterator.svg" width="100%" height="100%">
+          
+            <img src="images/algorithms/hit_iterator.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Hit Iterators</h5>
+      
+      <p class="card-text">Directly ray trace isosurfaces in your data - no meshing required!</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/algorithms/interval_iterator.svg" width="100%" height="100%">
+          
+            <img src="images/algorithms/interval_iterator.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Interval Iterators</h5>
+      
+      <p class="card-text">Walk along a ray in segments, skipping empty space and getting value ranges for delta tracking or step sizes for ray marching.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+  </div>
+</div>
+
+
+  <div class="row justify-content-center py-5 parallax feature-hero"
+     style="background-image:url(images/fire_extinguisher_vert.jpg);"
+     id="open_standards">
+  
+  <div class="col-3"></div> <!-- just for spacing -->
+  
+  <div class="col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Open Standards</h4>
+        
+        <p class="card-text">
+         The permissive Apache 2.0 license won't lock you in! Download the Open VKL
+        source code on <a href='https://www.github.com/OpenVKL/openvkl'>GitHub</a> and modify it to fit your needs.
+        </p>
+        
+        <p class="card-text">
+         Open VKL is built with open source software such as the vectorizing
+        <a href="https://ispc.github.io">Intel&reg; ISPC compiler</a> and <a href="https://www.embree.org">Intel&reg; Embree</a>.
+        Open VKL understands data stored with <a href="https://www.openvdb.org">Open VDB</a>, and can access it without conversion.
+        This is a great way to enable lighting fast vectorized code in your pipeline!
+        </p>
+        
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+  <div class="container-lg"
+  >
+  <div class="row justify-content-center py-5 feature-gallery">
+    <div class="row justify-content-center pb-5">
+      <div class="col-sm-6">
+        <h2>Data Structures </h2>
+      </div>
+    </div>
+
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/structured_regular.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/structured_regular.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Structured Regular</h5>
+      
+      <p class="card-text">Structured regular volumes are blazingly fast, and a great option for small to medium sized data sets.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/structured_spherical.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/structured_spherical.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Structured Spherical</h5>
+      
+      <p class="card-text">Some problems have a spherical structure. Use structured spherical volumes for efficient storage in this case!</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/vdb.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/vdb.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">VDB</h5>
+      
+      <p class="card-text">The de facto standard in studio pipelines around the world, VDB is a sparse, hierarchical grid structure.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/amr.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/amr.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Adaptive Mesh Refinement</h5>
+      
+      <p class="card-text">Popular in the scientific visualization community, AMR volumes provide great empty space culling and near infinite detail.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/unstructured.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/unstructured.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Unstructured</h5>
+      
+      <p class="card-text">Unstructured volumes adapt perfectly to polygonal surface meshes, and are often used in finite element simulations.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+      <div class="col-sm-4 col-md-4 feature.html"
+  >
+  <div class="card text-center mb-5">
+    
+
+    
+
+    
+      <picture>
+        <source
+          type="image/svg+xml"
+          srcset="images/volume_types/particle.svg" width="100%" height="100%">
+          
+            <img src="images/volume_types/particle.png" class="card-img-top mx-auto">
+          
+      </picture>
+    
+
+    <div class="card-body">
+      <h5 class="card-title">Particle</h5>
+      
+      <p class="card-text">Disintegrate your data! Particle volumes represent field data using RBF kernels centered around points in space.</p>
+      
+      
+    </div>
+  </div>
+</div>
+    
+  </div>
+</div>
+
+
+
+    </main>
+
+    <footer>
+      <nav class="navbar navbar-expand-sm navbar-light">
+        <div class="container-xl">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="https://www.intel.com">&copy;&nbsp;2021 Intel Corporation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://www.intel.com/content/www/us/en/legal/terms-of-use.html">Terms of Use</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://www.intel.com/content/www/us/en/legal/trademarks.html">Trademarks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://www.intel.com/content/www/us/en/privacy/intel-privacy-notice.html">Privacy</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://www.intel.com/content/www/us/en/privacy/intel-cookie-notice.html">Cookies</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </footer>
+
+    <script src="static-fw/bootstrap-5.0.0-beta2-dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

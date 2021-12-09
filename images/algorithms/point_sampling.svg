@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 270.93 270.93" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <marker id="marker1301-2" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+  <marker id="marker1297-7" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+  <marker id="marker1293-9" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+  <marker id="marker1289-2" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+  <marker id="marker1285-97" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+  <marker id="Arrow1Mend" overflow="visible" orient="auto">
+   <path transform="scale(.4) rotate(180) translate(10)" d="m0 0 5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt"/>
+  </marker>
+ </defs>
+ <g transform="translate(-3.8188e-6 -1.6583)" fill="none" stroke="#000" stroke-dasharray="1.184, 1.184" stroke-width=".592">
+  <path d="m135.47 137.12v-120"/>
+  <path d="m135.27 135.25 103.92 60"/>
+  <path d="m31.544 195.47 51.962-30"/>
+  <path d="m83.505 165.47 51.608-30.099"/>
+ </g>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)" fill="#00a3f6">
+  <path d="m720.1 777.64 98.195-56.693v75.591l-98.195 56.693zm0 75.591 98.195-56.693v37.795l-98.195 56.693zm98.195-132.28 32.732-18.898v113.39l-32.732 18.898zm-163.66 94.488 65.463-37.795v113.39l-65.463 37.795zm-98.195 170.08 98.195-56.693v-226.77l-98.195 56.693zm98.195-283.46 163.66-94.488v37.795l32.732-18.898v75.591l-196.39 113.39zm196.39 0 98.195-56.693v113.39l-98.195 56.693zm-294.59-170.08 196.39-113.39v226.77l-196.39 113.39" fill="#00a3f6"/>
+ </g>
+ <path d="m83.505 105.47 51.962 30v60l-51.962-30zm51.962 90v60l-103.92-60v-30l25.981 15v-30" fill="#0068b5"/>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)" fill="#76ceff">
+  <path d="m163.66 645.35 98.195-56.693" stroke="#000" stroke-width="1px"/>
+  <path d="m163.66 645.35 98.195 56.693v-113.39z"/>
+  <path d="m360.05 531.97v113.39l-98.195-56.693z"/>
+  <path d="m360.05 418.58 196.39-113.39 196.39 113.39-196.39 113.39z"/>
+  <path d="m752.83 569.76v75.591l65.463-37.795z"/>
+  <path d="m818.29 645.35 32.732-18.898-32.732-18.898z"/>
+  <path d="m851.02 588.66 98.195 56.693-98.195 56.693v-75.591l-32.732-18.898z"/>
+ </g>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)">
+  <g fill="none">
+   <path d="m785.56 588.66-32.732 18.898" stroke="#555" stroke-dasharray="4, 4" stroke-width="2"/>
+   <path d="m752.83 607.56 32.732 18.898" stroke="#555" stroke-dasharray="4, 4" stroke-width="2"/>
+   <path d="m163.66 645.35 196.39-113.39v-113.39l196.39-113.39 196.39 113.39v151.18l65.463 37.795 32.732-18.898 98.195 56.693v113.39l-392.78 226.77-392.78-226.77z" stroke="#00285a" stroke-width="3"/>
+  </g>
+  <path d="m818.29 607.56 32.732 18.898" fill="#ffe17a" stroke="#00285a" stroke-width="3"/>
+  <g fill="none" stroke="#00285a" stroke-width="3">
+   <path d="m163.66 645.35 98.195 56.693"/>
+   <path d="m261.85 588.66v113.39"/>
+   <path d="m261.85 588.66 98.195 56.693"/>
+   <path d="m360.05 531.97v113.39"/>
+   <path d="m818.29 607.56-65.463 37.795"/>
+   <path d="m818.29 607.56v37.795"/>
+   <path d="m851.02 626.46-32.732 18.898"/>
+   <path d="m851.02 626.46v75.591"/>
+   <path d="m949.22 645.35-98.195 56.693"/>
+   <path d="m556.44 531.97v453.54"/>
+   <path d="m556.44 531.97-196.39-113.39"/>
+   <path d="m556.44 531.97 196.39-113.39"/>
+   <path d="m752.83 569.76v75.591"/>
+  </g>
+ </g>
+ <g fill="none" stroke="#252525" stroke-dasharray="1.184,1.184" stroke-width=".592">
+  <path d="m83.505 165.47v60"/>
+  <path d="m187.43 165.47-51.962 30"/>
+  <path d="m83.505 165.47 51.962 30"/>
+ </g>
+ <g fill="none" stroke="#252525" stroke-dasharray="1.184,1.184" stroke-width=".592">
+  <path d="m109.49 240.47v-60"/>
+  <path d="m83.505 195.47 51.962 30"/>
+  <path d="m161.45 210.47-25.981 15"/>
+  <path d="m161.45 180.47v60"/>
+  <path d="m213.41 180.47v30"/>
+  <path d="m57.524 180.47 25.981 15"/>
+  <path d="m57.524 210.47v-30"/>
+ </g>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)" fill="none" stroke="#000">
+  <g stroke-dasharray="4, 4" stroke-width="2">
+   <path d="m654.63 739.84 163.66-94.488"/>
+   <path d="m654.63 891.02 196.39-113.39"/>
+   <path d="m687.37 683.15v226.77"/>
+   <path d="m720.1 664.25v226.77"/>
+   <path d="m785.56 815.43v37.795"/>
+   <path d="m818.29 645.35v188.98"/>
+   <path d="m654.63 777.64 196.39-113.39"/>
+   <path d="m818.29 758.74 32.732-18.898"/>
+   <path d="m752.83 645.35v113.39"/>
+   <path d="m654.63 815.43 196.39-113.39"/>
+   <path d="m752.83 834.33v37.795"/>
+   <path d="m785.56 626.46v113.39"/>
+   <path d="m654.63 853.23 65.463-37.795"/>
+  </g>
+  <g stroke-dasharray="2, 2">
+   <path d="m752.83 758.74v75.591"/>
+   <path d="m785.56 739.84v75.591"/>
+   <path d="m720.1 815.43 98.195-56.693"/>
+   <path d="m736.46 768.19v75.591"/>
+   <path d="m769.19 749.29v75.591"/>
+   <path d="m801.93 730.39v75.591"/>
+   <path d="m720.1 796.54 98.195-56.693"/>
+   <path d="m720.1 834.33 98.195-56.693"/>
+  </g>
+ </g>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)">
+  <path d="m163.66 305.2 392.78-226.77 392.78 226.77v453.54l-392.78 226.77-392.78-226.77z" fill="none" stroke="#252525" stroke-width="4"/>
+ </g>
+ <g transform="matrix(.26458 0 0 .26458 -11.758 -5.2833)" display="none">
+  <g fill="none" stroke="#000" stroke-dasharray="2, 2" stroke-width="2">
+   <path d="m981.95 777.64 98.195 56.693"/>
+   <path d="m589.17 1004.4 98.195 56.693"/>
+   <path d="m523.71 1004.4-98.195 56.693"/>
+   <path d="m130.93 777.64-98.195 56.693"/>
+   <path d="m1014.7 758.74h130.93"/>
+   <path d="m1014.7 305.2h130.93"/>
+  </g>
+  <g fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px">
+   <text x="1051.6909" y="541.23267" style="line-height:1.25" xml:space="preserve"><tspan x="1051.6909" y="541.23267">Ny</tspan></text>
+   <text x="812.09882" y="933.71283" style="line-height:1.25" xml:space="preserve"><tspan x="812.09882" y="933.71283">Nz</tspan></text>
+   <text x="245.96893" y="933.42047" style="line-height:1.25" xml:space="preserve"><tspan x="245.96893" y="933.42047">Nx</tspan></text>
+  </g>
+  <g fill="none" stroke="#000" stroke-dasharray="2, 2" stroke-width="2">
+   <path d="m1080.1 456.38v-113.39" marker-end="url(#marker1297-7)"/>
+   <path d="m1080.1 607.56v113.39" marker-end="url(#marker1293-9)"/>
+   <path d="m899.64 882.05 98.195-56.693" marker-end="url(#marker1289-2)"/>
+   <path d="m768.71 957.64-98.195 56.693" marker-end="url(#marker1285-97)"/>
+   <path d="m343.86 957.35 98.195 56.693" marker-end="url(#marker1301-2)"/>
+   <path d="m212.93 881.76-98.195-56.693" marker-end="url(#Arrow1Mend)"/>
+  </g>
+ </g>
+ <g transform="translate(3.1184 2.8566)" stroke-linejoin="bevel" stroke-width="1.184">
+  <circle cx="131.24" cy="118.4" r="3.8691" fill="#fec91b" stroke="#e96115"/>
+  <circle cx="121.92" cy="203.4" r="3.8691" fill="#fec91b" stroke="#e96115"/>
+  <circle cx="73.895" cy="75.931" r="3.8691" fill="#e9e9e9" stroke="#808080"/>
+  <circle cx="46.341" cy="187.29" r="3.8691" fill="#fec91b" stroke="#e96115"/>
+  <circle cx="192.97" cy="187.61" r="3.8691" fill="#fec91b" stroke="#e96115"/>
+  <circle cx="213" cy="134.12" r="3.8691" fill="#e9e9e9" stroke="#808080"/>
+ </g>
+</svg>
