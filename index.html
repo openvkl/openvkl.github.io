@@ -47,10 +47,10 @@
         
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" 
-               href="#" id="6d6d5e35-7b34-425f-be8c-620372f22933" role="button" 
+               href="#" id="8f460af6-8a4b-42d8-a46a-bf2d1e141ac4" role="button" 
                data-bs-toggle="dropdown" 
                aria-expanded="false">Resources</a>
-            <ul class="dropdown-menu" aria-labelledby="6d6d5e35-7b34-425f-be8c-620372f22933">
+            <ul class="dropdown-menu" aria-labelledby="8f460af6-8a4b-42d8-a46a-bf2d1e141ac4">
               
                 <li class="nav-item">
                 
@@ -110,10 +110,10 @@
         
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" 
-               href="#" id="0b1bf744-851a-4720-8c7e-2ada14b30277" role="button" 
+               href="#" id="4eede564-0e5a-400a-bd56-88dca84b7143" role="button" 
                data-bs-toggle="dropdown" 
                aria-expanded="false">RenderKit</a>
-            <ul class="dropdown-menu" aria-labelledby="0b1bf744-851a-4720-8c7e-2ada14b30277">
+            <ul class="dropdown-menu" aria-labelledby="4eede564-0e5a-400a-bd56-88dca84b7143">
               
                 <li class="nav-item">
                 
@@ -253,9 +253,13 @@
     a wide variety of volumetric data structures, as well as performance-optimized
     traversal and sampling algorithms.</p>
       
-      <p>We optimize Open VKL for the latest Intel&reg; processors with support
-    for SSE, AVX, AVX2, and AVX-512 instructions, and for ARM processors with
-    support for the NEON instruction set.</p>
+      <p>We optimize Open VKL the latest x86 processors with support
+for SSE, AVX, AVX2, and AVX-512 instructions, and for ARM processors with
+support for NEON instructions. Open VKL supports Intel GPUs based on the Xe HPG
+microarchitecture (Intel® Arc™ GPU) under Linux and Windows and Xe HPC
+microarchitecture (Intel® Data Center GPU Flex Series and Intel® Data Center GPU
+Max Series) under Linux. Intel GPU support leverages the SYCL open standard
+programming language</p>
       
       <p>Open VKL is available as open source under the Apache 2.0 license.</p>
       
@@ -283,9 +287,10 @@
   <div class="row justify-content-center py-5 release-notes"
     >
   <div class="col-sm-5">
-    <h2 id="release-version">Current Release: v1.3.0</h2>
+    <h2 id="release-version">Current Release: v2.0.0</h2>
     
-    <p>This release adds support for new VDB volume packed data layouts, improves memory efficiency and performance for particle volumes, and adds a new AVX512 8-wide CPU device mode.</p>
+    <p>This Open VKL release adds support for Intel® Arc™ GPUs, Intel® Data Center
+GPU Flex Series and Intel® Data Center GPU Max Series through SYCL. GPU support is currently in beta.</p>
     
     <ul class="list-unstyled">
       <li><a href="https://www.github.com/OpenVKL/openvkl/releases"><i class="fa fa-github fa-fw"></i>Get it on GitHub</a></li>
@@ -611,7 +616,7 @@
         <div class="container-xl">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="https://www.intel.com">&copy;&nbsp;2022 Intel Corporation</a>
+              <a class="nav-link" href="https://www.intel.com">&copy;&nbsp;2023 Intel Corporation</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="https://www.intel.com/content/www/us/en/legal/terms-of-use.html">Terms of Use</a>
